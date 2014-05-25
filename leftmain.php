@@ -258,15 +258,7 @@ QUERY
     }
 
     // configure timestamp to insert/update //
-
-    $time = time();
-    $hour = gmdate('H', $time);
-    $min = gmdate('i', $time);
-    $sec = gmdate('s', $time);
-    $month = gmdate('m', $time);
-    $day = gmdate('d', $time);
-    $year = gmdate('Y', $time);
-    $tz_stamp = mktime($hour, $min, $sec, $month, $day, $year);
+    $tz_stamp = time();
 
     if (has_value($barcode) or $use_passwd == "no") {
 

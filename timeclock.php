@@ -155,16 +155,7 @@ if (($display_current_users == "yes") && ($display_office == "all") && ($display
     $result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
 }
 
-$time = time();
-$tclock_hour = gmdate('H', $time);
-$tclock_min = gmdate('i', $time);
-$tclock_sec = gmdate('s', $time);
-$tclock_month = gmdate('m', $time);
-$tclock_day = gmdate('d', $time);
-$tclock_year = gmdate('Y', $time);
-$tclock_stamp = mktime($tclock_hour, $tclock_min, $tclock_sec, $tclock_month, $tclock_day, $tclock_year);
-
-$tclock_stamp = $tclock_stamp + @$tzo;
+$tclock_stamp = time() + @$tzo;
 $tclock_time = date($timefmt, $tclock_stamp);
 $tclock_date = date($datefmt, $tclock_stamp);
 $report_name = "Current Status Report";

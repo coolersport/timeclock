@@ -235,14 +235,14 @@ function day_timestamp($local_timestamp = null) {
     $day = date('d', $local_timestamp);
     $year = date('Y', $local_timestamp);
 
-    return mktime(0, 0, 0, $month, $day, $year);
+    return gmmktime(0, 0, 0, $month, $day, $year);
 }
 
 function make_timestamp($date_str) {
     // Make local timestamp from date string of mm/dd/yyyy or dd/mm/yyyy.
     global $calendar_style;
     $arr = preg_split('/\W/', $date_str);
-    $ts = $calendar_style == "euro" ? mktime(0, 0, 0, $arr[1], $arr[0], $arr[2]) : mktime(0, 0, 0, $arr[0], $arr[1], $arr[2]);
+    $ts = $calendar_style == "euro" ? gmmktime(0,0,0,$arr[1],$arr[0],$arr[2]) : gmmktime(0,0,0,$arr[0],$arr[1],$arr[2]);
 
     return $ts;
 }

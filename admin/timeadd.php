@@ -656,15 +656,7 @@ if ($request == 'GET') {
         }
 
         // configure current time to insert for audit log
-
-        $time = time();
-        $time_hour = gmdate('H', $time);
-        $time_min = gmdate('i', $time);
-        $time_sec = gmdate('s', $time);
-        $time_month = gmdate('m', $time);
-        $time_day = gmdate('d', $time);
-        $time_year = gmdate('Y', $time);
-        $time_tz_stamp = mktime($time_hour, $time_min, $time_sec, $time_month, $time_day, $time_year);
+        $time_tz_stamp = time();
 
         // this needs to be changed later
         $post_why = "";
