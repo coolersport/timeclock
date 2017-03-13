@@ -3,7 +3,7 @@
  * Punchclock programs' header.
  */
 
-require_once 'config.inc.php';
+require 'common.php';
 
 // Arguments
 global $PAGE_TITLE, $PAGE_META, $PAGE_STYLE, $PAGE_SCRIPT, $PAGE_BODY_ID, $PAGE_CONTENT_HEADER;

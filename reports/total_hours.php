@@ -6,7 +6,7 @@ $self = $_SERVER['PHP_SELF'];
 $request = $_SERVER['REQUEST_METHOD'];
 $current_page = "total_hours.php";
 
-include '../config.inc.php';
+require '../common.php';
 
 if (!isset($tzo)) {
     settype($tzo, "integer");

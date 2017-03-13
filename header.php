@@ -1,5 +1,6 @@
 <?php
 
+require 'common.php';
 include 'functions.php';
 
 ob_start();

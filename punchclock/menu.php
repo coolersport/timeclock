@@ -10,7 +10,7 @@ $current_page = "menu.php";
 session_start();
 $_SESSION['application'] = $current_page; // security
 
-include 'config.inc.php';
+require 'common.php';
 include 'setup_timeclock.php'; // authorize and initialize
 
 $PAGE_TITLE = "Menu = $title";

@@ -27,7 +27,7 @@ New Install
     Give this user at least SELECT, UPDATE, INSERT, DELETE, ALTER, and CREATE privileges to ONLY
     this database.
 --- Import the tables using the create_tables.sql script included in this distribution.
---- Edit config.inc.php.
+--- Copy config.inc.php.sample to config.inc.php and modify settings as desired.
 --- Open index.php with your web browser.
 --- Click on the Administration link on the right side of the page. Input "admin" (without the quotes)
     for the username and "admin" (without the quotes) for the password. Please change the password

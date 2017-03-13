@@ -6,7 +6,7 @@ $self = $_SERVER['PHP_SELF'];
 $request = $_SERVER['REQUEST_METHOD'];
 $current_page = "timerpt.php";
 
-include '../config.inc.php';
+require '../common.php';
 
 if ($use_reports_password == "yes") {
 

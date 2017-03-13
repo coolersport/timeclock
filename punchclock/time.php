@@ -15,7 +15,7 @@
  *	Opera:		3/8/10  3:22:01 PM
  */
 
-require_once "lib.common.php";
+require 'common.php';
 
 $timestamp = utm_timestamp() + timezone_offset();
 $timeclock = date('l F j, Y H:i', $timestamp); // initial display

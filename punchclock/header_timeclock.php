@@ -4,7 +4,7 @@
  * Wrapper around Timeclock header.
  */
 
-require_once 'config.inc.php';
+require 'common.php';
 
 $punchclock_path = getcwd();
 chdir("$TIMECLOCK_PATH");

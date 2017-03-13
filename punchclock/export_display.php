@@ -8,6 +8,7 @@ if (!isset($_SESSION['application'])) {
     exit;
 }
 
+require 'common.php';
 require_once 'class.Timecard.php';
 
 // Construct query parameters

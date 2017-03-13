@@ -1,10 +1,10 @@
 <?php
 session_start();
+require '../common.php';
 
 $self = $_SERVER['PHP_SELF'];
 $request = $_SERVER['REQUEST_METHOD'];
 
-include '../config.inc.php';
 if ($request == 'GET') {
     include 'header_get_sysedit.php';
     include 'topmain.php';

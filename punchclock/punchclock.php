@@ -10,8 +10,7 @@
 
 $current_page = "punchclock.php";
 
-require_once 'config.inc.php';
-require_once 'lib.common.php';
+require 'common.php';
 require_once 'lib.select.php';
 turn_off_magic_quotes();
 

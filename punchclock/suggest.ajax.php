@@ -9,7 +9,7 @@ session_start();
 if (!isset($_SESSION['application']))
     die("Invalid invocation.");
 
-require_once 'config.inc.php';
+require 'common.php';
 
 // Parse arguments.
 $search = isset($_GET['q']) ? $_GET['q'] : null;

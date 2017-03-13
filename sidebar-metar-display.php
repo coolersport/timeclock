@@ -40,7 +40,7 @@
 	
 
 <?php
-require_once 'config.inc.php';
+require 'common.php';
 $SITE = array();  // required for non-Saratoga template use
 global $SITE;
 

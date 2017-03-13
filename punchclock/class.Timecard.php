@@ -3,8 +3,7 @@
  * Timecard object for an employee for one work week (or less).
  */
 
-require_once 'config.inc.php';
-require_once 'lib.common.php';
+require 'common.php';
 
 class Timecard {
     var $empfullname; // employee id of timecard

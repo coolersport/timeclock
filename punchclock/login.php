@@ -5,8 +5,7 @@
 
 $current_page = "login.php";
 
-require_once 'config.inc.php';
-require_once 'lib.common.php';
+require 'common.php';
 turn_off_magic_quotes();
 
 // Check for logout

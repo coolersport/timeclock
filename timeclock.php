@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-include 'config.inc.php';
+require 'common.php';
 include 'header.php';
 
 if (!isset($_GET['printer_friendly'])) {

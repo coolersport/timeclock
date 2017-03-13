@@ -32,8 +32,6 @@ CREATE TABLE `dbversion` (
   `dbversion` decimal(5,1) PRIMARY KEY
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
-INSERT INTO dbversion VALUES ('1.4');
-
 
 -- --------------------------------------------------------
 --
@@ -127,7 +125,7 @@ CREATE TABLE `punchlist` (
 --
 
 INSERT INTO employees VALUES ('admin', NULL, 'xy.RY2HT1QTc2', 'administrator', '', '', '', 1, 1, 1, '');
-INSERT INTO dbversion VALUES ('1.5');
+INSERT INTO dbversion VALUES ('2.0');
 INSERT INTO punchlist VALUES ('in', '#009900', 1);
 INSERT INTO punchlist VALUES ('out', '#FF0000', 0);
 INSERT INTO punchlist VALUES ('break', '#FF9900', 0);

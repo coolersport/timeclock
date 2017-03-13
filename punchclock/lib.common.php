@@ -3,8 +3,6 @@
  * Punchclock functions.
  */
 
-require_once 'config.inc.php';
-
 ////////////////////////////////////////
 function mysqli_result($res,$row=0,$col=0){ 
     $numrows = mysqli_num_rows($res); 

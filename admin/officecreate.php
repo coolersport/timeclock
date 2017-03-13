@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-include '../config.inc.php';
 include 'header.php';
 include 'topmain.php';
 echo "<title>$title - Create Office</title>\n";

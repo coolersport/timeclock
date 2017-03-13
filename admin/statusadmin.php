@@ -5,7 +5,6 @@ $self = $_SERVER['PHP_SELF'];
 $request = $_SERVER['REQUEST_METHOD'];
 $user_agent = $_SERVER['HTTP_USER_AGENT'];
 
-include '../config.inc.php';
 include 'header.php';
 include 'topmain.php';
 echo "<title>$title - Status Summary</title>\n";

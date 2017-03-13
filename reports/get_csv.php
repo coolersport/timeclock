@@ -1,6 +1,6 @@
 <?php
 
-include '../config.inc.php';
+require '../common.php';
 include '../functions.php';
 
 @$db = ($GLOBALS["___mysqli_ston"] = mysqli_connect($db_hostname,  $db_username,  $db_password));

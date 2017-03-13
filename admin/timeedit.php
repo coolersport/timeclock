@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-include '../config.inc.php';
 include 'header_date.php';
 include 'topmain.php';
 echo "<title>$title - Edit Time</title>\n";

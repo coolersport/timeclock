@@ -3,8 +3,7 @@
  * Timecard functions.
  */
 
-require_once 'config.inc.php';
-require_once 'lib.common.php';
+require 'common.php';
 require_once 'class.Timecard.php';
 
 ////////////////////////////////////////

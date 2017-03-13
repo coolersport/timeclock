@@ -8,7 +8,7 @@
 
         <?php
 
-        include '../config.inc.php';
+        require '../common.php';
 
         @$office_name = $display_office;
 

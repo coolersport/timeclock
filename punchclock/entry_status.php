@@ -8,8 +8,7 @@ if (!isset($_SESSION['application'])) {
     exit;
 }
 
-require_once 'config.inc.php';
-require_once 'lib.common.php';
+require 'common.php';
 
 // Configuration variables.
 global $timefmt, $datefmt, $timecard_display_hours_minutes;

@@ -2,7 +2,6 @@
 
 session_start();
 
-include '../config.inc.php';
 include 'header.php';
 include 'topmain.php';
 echo "<title>$title - User Summary</title>\n";
