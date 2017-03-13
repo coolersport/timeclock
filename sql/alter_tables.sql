@@ -110,7 +110,7 @@ ALTER TABLE `employees` ADD `admin` TINYINT(1) NOT NULL DEFAULT '0';
 ALTER TABLE `employees` ADD `reports` TINYINT(1) NOT NULL DEFAULT '0';
 ALTER TABLE `employees` ADD `time_admin` TINYINT(1) NOT NULL DEFAULT '0';
 ALTER TABLE `employees` ADD `disabled` TINYINT(1) NOT NULL DEFAULT '0';
-INSERT INTO employees VALUES ('admin', NULL, 'xy.RY2HT1QTc2', 'administrator', '', '', '', 1, 1, 1, '');
+INSERT INTO employees (empfullname, employee_passwd, displayname, `admin`, reports, time_admin) VALUES ('admin', 'xy.RY2HT1QTc2', 'administrator', 1, 1, 1);
 
 # --------------------------------------------------------
 
