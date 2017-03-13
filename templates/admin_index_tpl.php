@@ -287,25 +287,6 @@ echo "              <tr><td bgcolor='$row_color' class=table_rows width=10% alig
                   </td></tr>\n";                                                   
 $row_count++;
 $row_color = ($row_count % 2) ? $color2 : $color1;
-echo "              <tr><td bgcolor='$row_color' class=table_rows width=10% align=left style='padding-left:4px;' valign=top>metar:</td>
-                  <td bgcolor='$row_color' class=table_rows width=10% align=left valign=top>$metar</td>
-                  <td bgcolor='$row_color' class=table_rows width=80% align=left style='padding-left:10px;' valign=top>If 'display_weather' is set 
-                      to \"no\", this option is ignored. If 'display_weather' is set to \"yes\", you have to set an WxList in config.inc.php. <br>
-                      <b>The ICAO (International Civil Aviation Organization) for your weather location is defined in config.inc.php, not here.</b><br>  
-                      You can configure the weather display to use reports created at any of roughly 4500 airports from around the world, 
-                      so you probably live near one of them. The reports are stored at the National Weather Service and are publically available via HTTP 
-                      or FTP. <br><br>Visit <a href='https://pilotweb.nas.faa.gov/qryhtml/icao/' class=admin_headings style='text-decoration:underline;'> 
-                      https://pilotweb.nas.faa.gov/qryhtml/icao/</a> to find a corresponding ICAO near you. 
-                  </td></tr>\n";
-$row_count++;
-$row_color = ($row_count % 2) ? $color2 : $color1;
-echo "              <tr><td bgcolor='$row_color' class=table_rows width=10% align=left style='padding-left:4px;' valign=top>city:</td>
-                  <td bgcolor='$row_color' class=table_rows width=10% align=left valign=top>$city</td>
-                  <td bgcolor='$row_color' class=table_rows width=80% align=left style='padding-left:10px;' valign=top>This is the city and state (or 
-                      can be city and country) of the airport for the ICAO used above. If 'display_weather' is set to \"no\", this option is ignored.
-                  </td></tr>\n";
-$row_count++;
-$row_color = ($row_count % 2) ? $color2 : $color1;
 echo "              <tr><td bgcolor='$row_color' class=table_rows width=10% align=left style='padding-left:4px;' valign=top>links:</td>
                   <td bgcolor='$row_color' class=table_rows width=10% align=left valign=top>";
 if ($links == "none") {

@@ -235,20 +235,6 @@ if ($request == 'GET') {
         echo "            </table>\n";
         $evil = "1";
         echo "            <br />\n";
-    } elseif ((strlen($metar) > 4) || (!preg_match('/' . "^([a-zA-Z]{4})+$" . '/i', $metar))) {
-        echo "            <table align=center class=table_border width=100% border=0 cellpadding=0 cellspacing=3>\n";
-        echo "              <tr><td width=20 align=center height=25 class=table_rows><img src='../images/icons/cancel.png' /></td>
-                  <td class=table_rows_red height=25><b>metar</b> is not a valid metar.</td></tr>\n";
-        echo "            </table>\n";
-        $evil = "1";
-        echo "            <br />\n";
-    } elseif ((strlen($city) > 100)) {
-        echo "            <table align=center class=table_border width=100% border=0 cellpadding=0 cellspacing=3>\n";
-        echo "              <tr><td width=20 align=center height=25 class=table_rows><img src='../images/icons/cancel.png' /></td>
-                  <td class=table_rows_red height=25><b>city</b> is longer than the allowed 100 characters.</td></tr>\n";
-        echo "            </table>\n";
-        $evil = "1";
-        echo "            <br />\n";
     } elseif ((!is_integer($refresh)) || (empty($refresh))) {
         if ((empty($refresh)) || ($refresh != 'none')) {
             echo "            <table align=center class=table_border width=100% border=0 cellpadding=0 cellspacing=3>\n";
@@ -1055,28 +1041,6 @@ if ($request == 'GET') {
     echo "                  <td bgcolor='$row_color' class=table_rows width=80% align=left style='padding-left:10px;' valign=top>Display weather in US or metric measurements.
     Options are Fahrenheit or Celsius. Default is Celsius\".
              		</td></tr>\n";
-    $row_count++;
-    $row_color = ($row_count % 2) ? $color2 : $color1;
-    echo "              <tr><td bgcolor='$row_color' class=table_rows width=10% align=left style='padding-left:4px;' valign=top>metar:</td>
-                  <td bgcolor='$row_color' class=table_rows width=10% align=left valign=top>$metar</td>
-                  <td bgcolor='$row_color' class=table_rows width=80% align=left style='padding-left:10px;' valign=top>If 'display_weather' is set 
-                      to \"no\", this option is ignored. If 'display_weather' is set to \"yes\", you have to set an WxList in config.inc.php. <br>
-                      <b>The ICAO (International Civil Aviation Organization) for your weather location is defined in config.inc.php, not here.</b><br>  
-                      You can configure the weather display to use reports created at any of roughly 4500 airports from around the world, 
-                      so you probably live near one of them. The reports are stored at the National Weather Service and are publically available via HTTP 
-                      or FTP. <br><br>Visit <a href='https://pilotweb.nas.faa.gov/qryhtml/icao/' class=admin_headings style='text-decoration:underline;'> 
-                      https://pilotweb.nas.faa.gov/qryhtml/icao/</a> to find a corresponding ICAO near you. 
-                 </td></tr>\n";
-    $row_count++;
-    $row_color = ($row_count % 2) ? $color2 : $color1;
-    $city = htmlentities($city);
-    echo "              <tr><td bgcolor='$row_color' class=table_rows width=10% align=left style='padding-left:4px;' valign=top>city:</td>
-                  <td bgcolor='$row_color' class=table_rows width=10% align=left valign=top><input type=\"text\" size=\"30\" maxlength=\"100\"
-                      name=\"city\" value=\"$city\" /></td>
-                  <td bgcolor='$row_color' class=table_rows width=80% align=left style='padding-left:10px;' valign=top>This is the city and state (or 
-                      can be city and country, or really can be anything you want) of the airport for the ICAO used above. If 'display_weather' is set 
-                      to \"no\", this option is ignored.
-                 </td></tr>\n";
     $row_count++;
     $row_color = ($row_count % 2) ? $color2 : $color1;
     echo "              <tr><td bgcolor='$row_color' class=table_rows width=10% align=left style='padding-left:4px;' valign=top>links:</td>
@@ -3141,25 +3105,6 @@ $display_weather = "' . $post_display_weather . '";
 /* Display weather in US or metric measurements. Options are "f" or "c". Default is "c" */
 
 $weather_units = "' . $post_weather_units . '";
-
-
-/* ICAO (International Civil Aviation Organization) for your local airport. This is the
-   unique four letter international ID for the airport. METAR reports are created at
-   roughly 4500 airports from around the world, so you probably live near one of them.
-   The airports make a report once or twice an hour, and these reports are stored at the
-   National Weather Service and are publically available via HTTP or FTP. Visit
-   https://pilotweb.nas.faa.gov/qryhtml/icao/ to find a corresponding ICAO near you. If
-   $display_weather is set to "no", this option is ignored. If $display_weather is set to
-   "yes", you MUST provide an ICAO here. */
-
-$metar = "' . $post_metar . '";
-
-
-/* This is the city and country (or can be city and state) of the airport for
-   the ICAO used above. The max length for this field is 100 characters.
-   If $display_weather is set to "no", this option is ignored. */
-
-$city = "' . $post_city . '";
 
 
 /* --- APP NAME, VERSION NUMBER, ETC. --- */
