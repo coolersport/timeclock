@@ -67,21 +67,13 @@ if ($request == 'GET') {
 
     if ($username_dropdown_only == "yes") {
 
-        $query = "select empfullname from " . $db_prefix . "employees order by empfullname asc";
-        $result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
-
         echo "              <tr><td class=table_rows height=25 width=20% style='padding-left:32px;' nowrap>Username:</td><td colspan=2 align=left width=80%
                       style='color:red;font-family:Tahoma;font-size:10px;padding-left:20px;'>
                   <select name='user_name'>\n";
         echo "                    <option value ='All'>All</option>\n";
-
-        while ($row = mysqli_fetch_array($result)) {
-            $tmp_empfullname = stripslashes("" . $row['empfullname'] . "");
-            echo "                    <option>$tmp_empfullname</option>\n";
-        }
+        echo html_options(tc_select("empfullname", "employees", "1=1 ORDER BY empfullname ASC"));
 
         echo "                  </select>&nbsp;*</td></tr>\n";
-        ((mysqli_free_result($result) || (is_object($result) && (get_class($result) == "mysqli_result"))) ? true : false);
     } else {
         echo "              <tr><td class=table_rows height=25 width=20% style='padding-left:32px;' nowrap>Choose Office:</td><td colspan=2 width=80%
                       style='color:red;font-family:Tahoma;font-size:10px;padding-left:20px;'>
@@ -110,117 +102,38 @@ if ($request == 'GET') {
     echo "            </table>\n";
     echo "            <div style=\"position:absolute;visibility:hidden;background-color:#ffffff;layer-background-color:#ffffff;\" id=\"mydiv\"
                  height=200>&nbsp;</div>\n";
-    echo "            <table align=center width=60% border=0 cellpadding=0 cellspacing=3>\n";
-    echo "              <tr><td class=table_rows height=25 valign=bottom>1.&nbsp;&nbsp;&nbsp;Export to CSV? (link to CSV file will be in the top right of
-                      the next page)</td></tr>\n";
-    if (strtolower($export_csv) == "yes") {
-        echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='csv' value='1' checked>&nbsp;Yes
-                      <input type='radio' name='csv' value='0'>&nbsp;No</td></tr>\n";
-    } else {
-        echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='csv' value='1'>&nbsp;Yes
-                      <input type='radio' name='csv' value='0' checked>&nbsp;No</td></tr>\n";
+
+    echo '<div style="width: 60%; margin-left: auto; margin-right: auto;">';
+
+    echo '<p><input type="checkbox" name="csv" value="1"' . (yes_no_bool($export_csv) ? " checked" : "") . '>&nbsp;';
+    echo "Export to CSV? (link to CSV file will be in the top right of the next page)</p>\n";
+
+    echo '<p><input type="checkbox" name="tmp_paginate" value="1"' . (yes_no_bool($paginate) ? " checked" : "") . '>&nbsp;';
+    echo "Paginate this report so each user's time is printed on a separate page?\n";
+
+    echo '<p><input type="checkbox" name="tmp_show_details" value="1" onchange="javascript:form.tmp_display_office.disabled=!this.checked;form.tmp_display_ip.disabled=!this.checked"' . (yes_no_bool($show_details) ? " checked" : "") . '>&nbsp;';
+    echo "Show punch-in/out details?\n</p>";
+
+    if (yes_no_bool($ip_logging)) {
+        echo '<p>&nbsp; &nbsp; &nbsp;<input type="checkbox" name="tmp_display_ip" value="1"' . (yes_no_bool($display_ip) ? " checked" : "") . '>&nbsp;';
+        echo "Display connecting ip address information?\n</p>";
     }
-    echo "              <tr><td class=table_rows height=25 valign=bottom>2.&nbsp;&nbsp;&nbsp;Paginate this report so each user's time is printed
-                      on a separate page?</td></tr>\n";
-    if ($paginate == "yes") {
-        echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_paginate' value='1' checked>&nbsp;Yes
-                      <input type='radio' name='tmp_paginate' value='0'>&nbsp;No</td></tr>\n";
-    } else {
-        echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_paginate' value='1'>&nbsp;Yes
-                      <input type='radio' name='tmp_paginate' value='0' checked>&nbsp;No</td></tr>\n";
-    }
-    echo "              <tr><td class=table_rows height=25 valign=bottom>3.&nbsp;&nbsp;&nbsp;Show punch-in/out details?</td></tr>\n";
-    if (strtolower($ip_logging) == "yes") {
-        if ($show_details == 'yes') {
-            echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_show_details' value='1'
-                      checked onFocus=\"javascript:form.tmp_display_ip[0].disabled=false;form.tmp_display_ip[1].disabled=false;\">&nbsp;Yes&nbsp;<input 
-                      type='radio' name='tmp_show_details' value='0' onFocus=\"javascript:form.tmp_display_ip[0].disabled=true;
-                      form.tmp_display_ip[1].disabled=true;\">&nbsp;No</td></tr>\n";
-        } else {
-            echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_show_details' value='1'
-                      onFocus=\"javascript:form.tmp_display_ip[0].disabled=false;form.tmp_display_ip[1].disabled=false;\">&nbsp;Yes&nbsp;<input 
-                      type='radio' name='tmp_show_details' value='0' checked onFocus=\"javascript:form.tmp_display_ip[0].disabled=true;
-                      form.tmp_display_ip[1].disabled=true;\">&nbsp;No</td></tr>\n";
-        }
-    } else {
-        if ($show_details == 'yes') {
-            echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_show_details' value='1'
-                      checked>&nbsp;Yes&nbsp;<input type='radio' name='tmp_show_details' value='0'>&nbsp;No</td></tr>\n";
-        } else {
-            echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_show_details' value='1'
-                      >&nbsp;Yes&nbsp;<input type='radio' name='tmp_show_details' value='0' checked>&nbsp;No</td></tr>\n";
-        }
-    }
-    if (strtolower($ip_logging) == "yes") {
-        echo "              <tr><td class=table_rows height=25 valign=bottom>4.&nbsp;&nbsp;&nbsp;Display connecting ip address information?
-                      (only available if \"Show punch-in/out details?\" is set to \"Yes\".)</td></tr>\n";
-        if ($show_details == 'yes') {
-            if ($display_ip == "yes") {
-                echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_display_ip' value='1'
-                      checked>&nbsp;Yes&nbsp;<input type='radio' name='tmp_display_ip' value='0'>&nbsp;No</td></tr>\n";
-            } else {
-                echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_display_ip' value='1' >&nbsp;Yes
-                      <input type='radio' name='tmp_display_ip' value='0' checked>&nbsp;No</td></tr>\n";
-            }
-        } else {
-            if ($display_ip == "yes") {
-                echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_display_ip' value='1'
-                      checked disabled>&nbsp;Yes&nbsp;<input type='radio' name='tmp_display_ip' value='0' disabled>&nbsp;No</td></tr>\n";
-            } else {
-                echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_display_ip' value='1'
-                      disabled>&nbsp;Yes&nbsp;<input type='radio' name='tmp_display_ip' value='0' checked disabled>&nbsp;No</td></tr>\n";
-            }
-        }
-    }
-    if (strtolower($ip_logging) == "yes") {
-        echo "              <tr><td colspan=2 class=table_rows height=25 valign=bottom>5.&nbsp;&nbsp;&nbsp;Round each user's time?</td></tr>\n";
-    } else {
-        echo "              <tr><td colspan=2 class=table_rows height=25 valign=bottom>4.&nbsp;&nbsp;&nbsp;Round each user's time?</td></tr>\n";
-    }
-    if ($round_time == '1') {
-        echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_round_time' value='1'
-                      checked>&nbsp;To the nearest 5 minutes (1/12th of an hour)</td></tr>\n";
-    } else {
-        echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_round_time' value='1'>&nbsp;To the
-                      nearest 5 minutes (1/12th of an hour)</td></tr>\n";
-    }
-    if ($round_time == '2') {
-        echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_round_time' value='2'
-                      checked>&nbsp;To the nearest 10 minutes (1/6th of an hour)</td></tr>\n";
-    } else {
-        echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_round_time' value='2'>&nbsp;To
-                      the nearest 10 minutes (1/6th of an hour)</td></tr>\n";
-    }
-    if ($round_time == '3') {
-        echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_round_time' value='3'
-                      checked>&nbsp;To the nearest 15 minutes (1/4th of an hour)</td></tr>\n";
-    } else {
-        echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_round_time' value='3'>&nbsp;To
-                      the nearest 15 minutes (1/4th of an hour)</td></tr>\n";
-    }
-    if ($round_time == '4') {
-        echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_round_time' value='4'
-                      checked>&nbsp;To the nearest 20 minutes (1/3rd of an hour)</td></tr>\n";
-    } else {
-        echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_round_time' value='4'>&nbsp;To
-                      the nearest 20 minutes (1/3rd of an hour)</td></tr>\n";
-    }
-    if ($round_time == '5') {
-        echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_round_time' value='5'
-                      checked>&nbsp;To the nearest 30 minutes (1/2 of an hour)</td></tr>\n";
-    } else {
-        echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_round_time' value='5'>&nbsp;To
-                      the nearest 30 minutes (1/2 of an hour)</td></tr>\n";
-    }
-    if (empty($round_time)) {
-        echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_round_time' value=0 checked>&nbsp;Do
-                      not round</td></tr>\n";
-    } else {
-        echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_round_time' value=0>&nbsp;Do not
-                      round</td></tr>\n";
-    }
-    echo "              <tr><td height=10></td></tr>\n";
-    echo "            </table>\n";
+
+    echo '<p>&nbsp; &nbsp; &nbsp;<input type="checkbox" name="tmp_display_office" value="1"' . (yes_no_bool($audit_office) ? " checked" : "") . '>&nbsp;';
+    echo "Display office information?\n</p>";
+
+    echo "<p>Round each user's time?</br>\n";
+    echo "<input type='radio' name='tmp_round_time' value='1'" . (($round_time == '1') ? " checked" : "") . ">&nbsp;To the nearest 5 minutes (1/12th of an hour)<br>\n";
+
+    echo "<input type='radio' name='tmp_round_time' value='2'" . (($round_time == '2') ? " checked" : "") . ">&nbsp;To the nearest 10 minutes (1/6th of an hour)<br>\n";
+    echo "<input type='radio' name='tmp_round_time' value='3'" . (($round_time == '3') ? " checked" : "") . ">&nbsp;To the nearest 15 minutes (1/4th of an hour)<br>\n";
+    echo "<input type='radio' name='tmp_round_time' value='4'" . (($round_time == '4') ? " checked" : "") . ">&nbsp;To the nearest 20 minutes (1/3rd of an hour)<br>\n";
+    echo "<input type='radio' name='tmp_round_time' value='5'" . (($round_time == '5') ? " checked" : "") . ">&nbsp;To the nearest 30 minutes (1/2 of an hour)<br>\n";
+    echo "<input type='radio' name='tmp_round_time' value='0'" . (empty($round_time)   ? " checked" : "") . ">&nbsp;Do not round<br>\n";
+    echo "</p>\n";
+
+    echo '</div>';
+
     echo "            <table align=center width=60% border=0 cellpadding=0 cellspacing=3>\n";
     echo "              <tr><td width=30><input type='image' name='submit' value='Edit Time' align='middle'
                       src='../images/buttons/next_button.png'></td><td><a href='index.php'><img src='../images/buttons/cancel_button.png'
@@ -234,60 +147,48 @@ if ($request == 'GET') {
 
     @$office_name = $_POST['office_name'];
     @$group_name = $_POST['group_name'];
-    $fullname = stripslashes($_POST['user_name']);
+    $fullname = $_POST['user_name'];
     $from_date = $_POST['from_date'];
     $to_date = $_POST['to_date'];
-    $tmp_paginate = $_POST['tmp_paginate'];
     $tmp_round_time = $_POST['tmp_round_time'];
-    $tmp_show_details = $_POST['tmp_show_details'];
-    @$tmp_display_ip = $_POST['tmp_display_ip'];
-    @$tmp_csv = $_POST['csv'];
-
-    $fullname = addslashes($fullname);
+    $tmp_paginate = one_or_empty(@$_POST['tmp_paginate']);
+    $tmp_show_details = one_or_empty(@$_POST['tmp_show_details']);
+    $tmp_display_ip = one_or_empty(@$_POST['tmp_display_ip']);
+    $tmp_display_office = one_or_empty(@$_POST['tmp_display_office']);
+    $tmp_csv = one_or_empty(@$_POST['csv']);
 
     // begin post validation //
 
     if ($fullname != "All") {
-        $query = "select empfullname, displayname from " . $db_prefix . "employees where empfullname = '" . $fullname . "'";
-        $result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
+        $result = tc_select("empfullname, displayname", "employees",  "empfullname = ?", $fullname);
 
         while ($row = mysqli_fetch_array($result)) {
-            $empfullname = stripslashes("" . $row['empfullname'] . "");
-            $displayname = stripslashes("" . $row['displayname'] . "");
+            $empfullname = "" . $row['empfullname'] . "";
+            $displayname = "" . $row['displayname'] . "";
         }
         if (!isset($empfullname)) {
             echo "Something is fishy here.\n";
             exit;
         }
     }
-    $fullname = stripslashes($fullname);
 
     if (($office_name != "All") && (!empty($office_name))) {
-        $query = "select officename from " . $db_prefix . "offices where officename = '" . $office_name . "'";
-        $result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
-        while ($row = mysqli_fetch_array($result)) {
-            $getoffice = "" . $row['officename'] . "";
-        }
+        $getoffice = tc_select_value("officename", "offices", "officename = ?", $office_name);
         if (!isset($getoffice)) {
             echo "Something smells fishy here.\n";
             exit;
         }
     }
+
     if (($group_name != "All") && (!empty($group_name))) {
-        $query = "select groupname from " . $db_prefix . "groups where groupname = '" . $group_name . "'";
-        $result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
-        while ($row = mysqli_fetch_array($result)) {
-            $getgroup = "" . $row['groupname'] . "";
-        }
+        $getgroup = tc_select_value("groupname", "groups", "groupname = ?", $group_name);
         if (!isset($getgroup)) {
             echo "Something smells fishy here.\n";
             exit;
         }
     }
 
-    if ((!empty($tmp_round_time)) && ($tmp_round_time != '1') && ($tmp_round_time != '2') && ($tmp_round_time != '3') && ($tmp_round_time != '4') &&
-        ($tmp_round_time != '5')
-    ) {
+    if ((!empty($tmp_round_time)) && ($tmp_round_time != '1') && ($tmp_round_time != '2') && ($tmp_round_time != '3') && ($tmp_round_time != '4') && ($tmp_round_time != '5')) {
         $evil_post = '1';
         if ($use_reports_password == "yes") {
             include '../admin/topmain.php';
@@ -305,83 +206,6 @@ if ($request == 'GET') {
         echo "                <td class=table_rows width=20 align=center><img src='../images/icons/cancel.png' /></td><td class=table_rows_red>
                     Choose a rounding method.</td></tr>\n";
         echo "            </table>\n";
-    }
-    if (($tmp_paginate != '1') && (!empty($tmp_paginate))) {
-        $evil_post = '1';
-        if ($use_reports_password == "yes") {
-            include '../admin/topmain.php';
-        } else {
-            include 'topmain.php';
-        }
-        echo "<table width=100% height=89% border=0 cellpadding=0 cellspacing=1>\n";
-        echo "  <tr valign=top>\n";
-        echo "    <td>\n";
-        echo "      <table width=100% height=100% border=0 cellpadding=10 cellspacing=1>\n";
-        echo "        <tr class=right_main_text>\n";
-        echo "          <td valign=top>\n";
-        echo "            <table align=center class=table_border width=60% border=0 cellpadding=0 cellspacing=3>\n";
-        echo "              <tr>\n";
-        echo "                <td class=table_rows width=20 align=center><img src='../images/icons/cancel.png' /></td><td class=table_rows_red>
-                    Choose \"yes\" or \"no\" to the \"<b>Paginate This Report?</b>\" question.</td></tr>\n";
-        echo "            </table>\n";
-    } elseif (($tmp_show_details != '1') && (!empty($tmp_show_details))) {
-        $evil_post = '1';
-        if ($use_reports_password == "yes") {
-            include '../admin/topmain.php';
-        } else {
-            include 'topmain.php';
-        }
-        echo "<table width=100% height=89% border=0 cellpadding=0 cellspacing=1>\n";
-        echo "  <tr valign=top>\n";
-        echo "    <td>\n";
-        echo "      <table width=100% height=100% border=0 cellpadding=10 cellspacing=1>\n";
-        echo "        <tr class=right_main_text>\n";
-        echo "          <td valign=top>\n";
-        echo "            <table align=center class=table_border width=60% border=0 cellpadding=0 cellspacing=3>\n";
-        echo "              <tr>\n";
-        echo "                <td class=table_rows width=20 align=center><img src='../images/icons/cancel.png' /></td><td class=table_rows_red>
-                    Choose \"yes\" or \"no\" to the \"<b>Show Punch-in/out Details?</b>\" question.</td></tr>\n";
-        echo "            </table>\n";
-    } elseif (isset($tmp_display_ip)) {
-        if (($tmp_display_ip != '1') && (!empty($tmp_display_ip))) {
-            $evil_post = '1';
-            if ($use_reports_password == "yes") {
-                include '../admin/topmain.php';
-            } else {
-                include 'topmain.php';
-            }
-            echo "<table width=100% height=89% border=0 cellpadding=0 cellspacing=1>\n";
-            echo "  <tr valign=top>\n";
-            echo "    <td>\n";
-            echo "      <table width=100% height=100% border=0 cellpadding=10 cellspacing=1>\n";
-            echo "        <tr class=right_main_text>\n";
-            echo "          <td valign=top>\n";
-            echo "            <table align=center class=table_border width=60% border=0 cellpadding=0 cellspacing=3>\n";
-            echo "              <tr>\n";
-            echo "                <td class=table_rows width=20 align=center><img src='../images/icons/cancel.png' /></td><td class=table_rows_red>
-                    Choose \"yes\" or \"no\" to the \"<b>Show Punch-in/out Details?</b>\" question.</td></tr>\n";
-            echo "            </table>\n";
-        }
-    } elseif (isset($tmp_csv)) {
-        if (($tmp_csv != '1') && (!empty($tmp_csv))) {
-            $evil_post = '1';
-            if ($use_reports_password == "yes") {
-                include '../admin/topmain.php';
-            } else {
-                include 'topmain.php';
-            }
-            echo "<table width=100% height=89% border=0 cellpadding=0 cellspacing=1>\n";
-            echo "  <tr valign=top>\n";
-            echo "    <td>\n";
-            echo "      <table width=100% height=100% border=0 cellpadding=10 cellspacing=1>\n";
-            echo "        <tr class=right_main_text>\n";
-            echo "          <td valign=top>\n";
-            echo "            <table align=center class=table_border width=60% border=0 cellpadding=0 cellspacing=3>\n";
-            echo "              <tr>\n";
-            echo "                <td class=table_rows width=20 align=center><img src='../images/icons/cancel.png' /></td><td class=table_rows_red>
-                    Choose \"yes\" or \"no\" to the \"<b>Export to CSV?</b>\" question.</td></tr>\n";
-            echo "            </table>\n";
-        }
     }
 
     if (!isset($evil_post)) {
@@ -403,7 +227,7 @@ if ($request == 'GET') {
             echo "                <td class=table_rows width=20 align=center><img src='../images/icons/cancel.png' /></td><td class=table_rows_red>
                     A valid From Date is required.</td></tr>\n";
             echo "            </table>\n";
-        } elseif (!preg_match('/' . "^([0-9]?[0-9])+[-|\/|.]+([0-9]?[0-9])+[-|\/|.]+(([0-9]{2})|([0-9]{4}))$" . '/i', $from_date, $date_regs)) {
+        } elseif (!preg_match('< ^ ([0-9]?[0-9])+ [-/.]+ ([0-9]?[0-9])+ [-/.]+ (([0-9]{2})|([0-9]{4})) $ >x', $from_date, $date_regs)) {
             $evil_post = '1';
             if ($use_reports_password == "yes") {
                 include '../admin/topmain.php';
@@ -497,7 +321,7 @@ if ($request == 'GET') {
             echo "                <td class=table_rows width=20 align=center><img src='../images/icons/cancel.png' /></td><td class=table_rows_red>
                     A valid To Date is required.</td></tr>\n";
             echo "            </table>\n";
-        } elseif (!preg_match('/' . "^([0-9]?[0-9])+[-|\/|.]+([0-9]?[0-9])+[-|\/|.]+(([0-9]{2})|([0-9]{4}))$" . '/i', $to_date, $date_regs)) {
+        } elseif (!preg_match('< ^ ([0-9]?[0-9])+ [-/.]+ ([0-9]?[0-9])+ [-/.]+ (([0-9]{2})|([0-9]{4})) $ >x', $to_date, $date_regs)) {
             $evil_post = '1';
             if ($use_reports_password == "yes") {
                 include '../admin/topmain.php';
@@ -583,21 +407,13 @@ if ($request == 'GET') {
         echo "              <input type='hidden' name='date_format' value='$js_datefmt'>\n";
         if ($username_dropdown_only == "yes") {
 
-            $query = "select empfullname from " . $db_prefix . "employees order by empfullname asc";
-            $result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
-
             echo "              <tr><td class=table_rows height=25 width=20% style='padding-left:32px;' nowrap>Username:</td><td colspan=2 align=left width=80%
-                      style='color:red;font-family:Tahoma;font-size:10px;padding-left:20px;'>
-                  <select name='user_name'>\n";
+                          style='color:red;font-family:Tahoma;font-size:10px;padding-left:20px;'>
+                      <select name='user_name'>\n";
             echo "                    <option value ='All'>All</option>\n";
-
-            while ($row = mysqli_fetch_array($result)) {
-                $empfullname_tmp = stripslashes("" . $row['empfullname'] . "");
-                echo "                    <option>$empfullname_tmp</option>\n";
-            }
+            echo html_options(tc_select("empfullname", "employees", "1=1 ORDER BY empfullname ASC"));
 
             echo "                  </select>&nbsp;*</td></tr>\n";
-            ((mysqli_free_result($result) || (is_object($result) && (get_class($result) == "mysqli_result"))) ? true : false);
         } else {
 
             echo "              <tr><td class=table_rows height=25 width=20% style='padding-left:32px;' nowrap>Choose Office:</td><td colspan=2 width=80%
@@ -629,117 +445,38 @@ if ($request == 'GET') {
         echo "            </table>\n";
         echo "            <div style=\"position:absolute;visibility:hidden;background-color:#ffffff;layer-background-color:#ffffff;\" id=\"mydiv\"
                  height=200>&nbsp;</div>\n";
-        echo "            <table align=center width=60% border=0 cellpadding=0 cellspacing=3>\n";
-        echo "              <tr><td class=table_rows height=25 valign=bottom>1.&nbsp;&nbsp;&nbsp;Export to CSV? (link to CSV file will be in the top right of
-                      the next page)</td></tr>\n";
-        if ($tmp_csv == "1") {
-            echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='csv' value='1'
-                      checked>&nbsp;Yes<input type='radio' name='csv' value='0'>&nbsp;No</td></tr>\n";
-        } else {
-            echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='csv' value='1' >&nbsp;Yes
-                      <input type='radio' name='csv' value='0' checked>&nbsp;No</td></tr>\n";
+
+        echo '<div style="width: 60%; margin-left: auto; margin-right: auto;">';
+
+        echo '<p><input type="checkbox" name="csv" value="1"' . ($tmp_csv == "1" ? " checked" : "") . '>&nbsp;';
+        echo "Export to CSV? (link to CSV file will be in the top right of the next page)</p>\n";
+
+        echo '<p><input type="checkbox" name="tmp_paginate" value="1"' . ($tmp_paginate == "1" ? " checked" : "") . '>&nbsp;';
+        echo "Paginate this report so each user's time is printed on a separate page?\n";
+
+        echo '<p><input type="checkbox" name="tmp_show_details" value="1" onchange="javascript:form.tmp_display_office.disabled=!this.checked;form.tmp_display_ip.disabled=!this.checked"' . (($tmp_show_details == "1") ? " checked" : "") . '>&nbsp;';
+        echo "Show punch-in/out details?\n</p>";
+
+        if (yes_no_bool($ip_logging)) {
+            echo '<p>&nbsp; &nbsp; &nbsp;<input type="checkbox" name="tmp_display_ip" value="1"' . ($tmp_display_ip == "1" ? " checked" : "") . '>&nbsp;';
+            echo "Display connecting ip address information?\n</p>";
         }
-        echo "              <tr><td class=table_rows valign=bottom height=25 valign=bottom>2.&nbsp;&nbsp;&nbsp;Paginate this report so each user's time is printed
-                      on a separate page?</td></tr>\n";
-        if ($tmp_paginate == '1') {
-            echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_paginate' value='1' checked>&nbsp;Yes
-                      <input type='radio' name='tmp_paginate' value='0'>&nbsp;No</td></tr>\n";
-        } else {
-            echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_paginate' value='1'>&nbsp;Yes
-                      <input type='radio' name='tmp_paginate' value='0' checked>&nbsp;No</td></tr>\n";
-        }
-        echo "              <tr><td class=table_rows height=25 valign=bottom>3.&nbsp;&nbsp;&nbsp;Show punch-in/out details?</td></tr>\n";
-        if (strtolower($ip_logging) == "yes") {
-            if ($tmp_show_details == '1') {
-                echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_show_details' value='1'
-                      checked onFocus=\"javascript:form.tmp_display_ip[0].disabled=false;form.tmp_display_ip[1].disabled=false;\">&nbsp;Yes&nbsp;<input 
-                      type='radio' name='tmp_show_details' value='0' onFocus=\"javascript:form.tmp_display_ip[0].disabled=true;
-                      form.tmp_display_ip[1].disabled=true;\">&nbsp;No</td></tr>\n";
-            } else {
-                echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_show_details' value='1'
-                      onFocus=\"javascript:form.tmp_display_ip[0].disabled=false;form.tmp_display_ip[1].disabled=false;\">&nbsp;Yes&nbsp;<input 
-                      type='radio' name='tmp_show_details' value='0' checked onFocus=\"javascript:form.tmp_display_ip[0].disabled=true;
-                      form.tmp_display_ip[1].disabled=true;\">&nbsp;No</td></tr>\n";
-            }
-        } else {
-            if ($tmp_show_details == '1') {
-                echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_show_details' value='1'
-                      checked>&nbsp;Yes&nbsp;<input type='radio' name='tmp_show_details' value='0'>&nbsp;No</td></tr>\n";
-            } else {
-                echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_show_details' value='1'
-                      >&nbsp;Yes&nbsp;<input type='radio' name='tmp_show_details' value='0' checked>&nbsp;No</td></tr>\n";
-            }
-        }
-        if (strtolower($ip_logging) == "yes") {
-            echo "              <tr><td class=table_rows height=25 valign=bottom>4.&nbsp;&nbsp;&nbsp;Display connecting ip address information?
-                      (only available if \"Show punch-in/out details?\" is set to \"Yes\".)</td></tr>\n";
-            if ($tmp_show_details == '1') {
-                if ($tmp_display_ip == "1") {
-                    echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_display_ip' value='1'
-                      checked>&nbsp;Yes&nbsp;<input type='radio' name='tmp_display_ip' value='0'>&nbsp;No</td></tr>\n";
-                } else {
-                    echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_display_ip' value='1' >&nbsp;Yes
-                      <input type='radio' name='tmp_display_ip' value='0' checked>&nbsp;No</td></tr>\n";
-                }
-            } else {
-                if ($tmp_display_ip == "1") {
-                    echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_display_ip' value='1'
-                      checked disabled>&nbsp;Yes&nbsp;<input type='radio' name='tmp_display_ip' value='0' disabled>&nbsp;No</td></tr>\n";
-                } else {
-                    echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_display_ip' value='1'
-                      disabled>&nbsp;Yes&nbsp;<input type='radio' name='tmp_display_ip' value='0' checked disabled>&nbsp;No</td></tr>\n";
-                }
-            }
-        }
-        if (strtolower($ip_logging) == "yes") {
-            echo "              <tr><td colspan=2 class=table_rows height=25 valign=bottom>5.&nbsp;&nbsp;&nbsp;Round each user's time?</td></tr>\n";
-        } else {
-            echo "              <tr><td colspan=2 class=table_rows height=25 valign=bottom>4.&nbsp;&nbsp;&nbsp;Round each user's time?</td></tr>\n";
-        }
-        if ($tmp_round_time == '1') {
-            echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_round_time' value='1'
-                      checked>&nbsp;To the nearest 5 minutes (1/12th of an hour)</td></tr>\n";
-        } else {
-            echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_round_time' value='1'>&nbsp;To the
-                      nearest 5 minutes (1/12th of an hour)</td></tr>\n";
-        }
-        if ($tmp_round_time == '2') {
-            echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_round_time' value='2'
-                      checked>&nbsp;To the nearest 10 minutes (1/6th of an hour)</td></tr>\n";
-        } else {
-            echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_round_time' value='2'>&nbsp;To
-                      the nearest 10 minutes (1/6th of an hour)</td></tr>\n";
-        }
-        if ($tmp_round_time == '3') {
-            echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_round_time' value='3'
-                      checked>&nbsp;To the nearest 15 minutes (1/4th of an hour)</td></tr>\n";
-        } else {
-            echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_round_time' value='3'>&nbsp;To
-                      the nearest 15 minutes (1/4th of an hour)</td></tr>\n";
-        }
-        if ($tmp_round_time == '4') {
-            echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_round_time' value='4'
-                      checked>&nbsp;To the nearest 20 minutes (1/3rd of an hour)</td></tr>\n";
-        } else {
-            echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_round_time' value='4'>&nbsp;To
-                      the nearest 20 minutes (1/3rd of an hour)</td></tr>\n";
-        }
-        if ($tmp_round_time == '5') {
-            echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_round_time' value='5'
-                      checked>&nbsp;To the nearest 30 minutes (1/2 of an hour)</td></tr>\n";
-        } else {
-            echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_round_time' value='5'>&nbsp;To
-                      the nearest 30 minutes (1/2 of an hour)</td></tr>\n";
-        }
-        if (empty($tmp_round_time)) {
-            echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_round_time' value=0 checked>&nbsp;Do
-                      not round</td></tr>\n";
-        } else {
-            echo "              <tr><td class=table_rows align=left nowrap style='padding-left:15px;'><input type='radio' name='tmp_round_time' value=0>&nbsp;Do not
-                      round</td></tr>\n";
-        }
-        echo "              <tr><td height=10></td></tr>\n";
-        echo "            </table>\n";
+
+        echo '<p>&nbsp; &nbsp; &nbsp;<input type="checkbox" name="tmp_display_office" value="1"' . ($tmp_display_office == "1" ? " checked" : "") . '>&nbsp;';
+        echo "Display office information?\n</p>";
+
+        echo "<p>Round each user's time?</br>\n";
+        echo "<input type='radio' name='tmp_round_time' value='1'" . (($round_time == '1') ? " checked" : "") . ">&nbsp;To the nearest 5 minutes (1/12th of an hour)<br>\n";
+
+        echo "<input type='radio' name='tmp_round_time' value='2'" . (($round_time == '2') ? " checked" : "") . ">&nbsp;To the nearest 10 minutes (1/6th of an hour)<br>\n";
+        echo "<input type='radio' name='tmp_round_time' value='3'" . (($round_time == '3') ? " checked" : "") . ">&nbsp;To the nearest 15 minutes (1/4th of an hour)<br>\n";
+        echo "<input type='radio' name='tmp_round_time' value='4'" . (($round_time == '4') ? " checked" : "") . ">&nbsp;To the nearest 20 minutes (1/3rd of an hour)<br>\n";
+        echo "<input type='radio' name='tmp_round_time' value='5'" . (($round_time == '5') ? " checked" : "") . ">&nbsp;To the nearest 30 minutes (1/2 of an hour)<br>\n";
+        echo "<input type='radio' name='tmp_round_time' value='0'" . (empty($round_time)   ? " checked" : "") . ">&nbsp;Do not round<br>\n";
+        echo "</p>\n";
+
+        echo '</div>';
+
         echo "            <table align=center width=60% border=0 cellpadding=0 cellspacing=3>\n";
         echo "              <tr><td width=30><input type='image' name='submit' value='Edit Time' align='middle'
                       src='../images/buttons/next_button.png'></td><td><a href='index.php'><img src='../images/buttons/cancel_button.png'
@@ -762,44 +499,39 @@ if ($request == 'GET') {
         $to_date = $_POST['to_date'];
     }
 
-    //if (!empty($from_date)) {$from_timestamp = strtotime($from_date . " " . $report_start_time) - $tzo;}
-    //if (!empty($from_date)) {$to_timestamp = strtotime($to_date . " " . $report_end_time) - $tzo + 60;}
-
-    //if (!empty($from_date)) {$from_timestamp = strtotime($from_date) - @$tzo;}
-    //if (!empty($to_date)) {$to_timestamp = strtotime($to_date) + 86400 - @$tzo;}
-
     $rpt_stamp = time() + @$tzo;
     $rpt_time = date($timefmt, $rpt_stamp);
     $rpt_date = date($datefmt, $rpt_stamp);
 
-    $tmp_fullname = stripslashes($fullname);
+    $emp_name = $fullname;
+    if (strtolower($user_or_display) == "display") {
+        $emp_field_name = "displayname";
+    } else {
+        $emp_field_name = "empfullname";
+    }
+
+    $tmp_fullname = $fullname;
     if ((strtolower($user_or_display) == "display") && ($tmp_fullname != "All")) {
-        $tmp_fullname = stripslashes($displayname);
+        $tmp_fullname = $displayname;
     }
     if (($office_name == "All") && ($group_name == "All") && ($tmp_fullname == 'All')) {
-        $tmp_fullname = "Offices: All --> Groups: All --> Users: All";
+        $tmp_fullname = "Offices: All &rarr; Groups: All &rarr; Users: All";
     } elseif ((empty($office_name)) && (empty($group_name)) && ($tmp_fullname == 'All')) {
         $tmp_fullname = "All Users";
     } elseif ((empty($office_name)) && (empty($group_name)) && ($tmp_fullname != 'All')) {
         $tmp_fullname = $tmp_fullname;
     } elseif (($office_name != "All") && ($group_name == "All") && ($tmp_fullname == 'All')) {
-        $tmp_fullname = "Office: $office_name --> Groups: All -->
- Users: All";
+        $tmp_fullname = "Office: $office_name &rarr; Groups: All &rarr; Users: All";
     } elseif (($office_name != "All") && ($group_name != "All") && ($tmp_fullname == 'All')) {
-        $tmp_fullname = "Office: $office_name --> Group: $group_name -->
- Users: All";
+        $tmp_fullname = "Office: $office_name &rarr; Group: $group_name &rarr; Users: All";
     }
     $rpt_name = "$tmp_fullname";
+
     echo "<table width=80% align=center class=misc_items border=0 cellpadding=3 cellspacing=0>\n";
-    echo "  <tr><td width=80% style='font-size:9px;color:#000000;'>Run on: $rpt_time, $rpt_date</td><td nowrap style='font-size:9px;color:#000000;'>
-          $rpt_name</td></tr>\n";
-    echo "  <tr><td width=80%></td><td nowrap style='font-size:9px;color:#000000;'>Date Range: $from_date - $to_date</td></tr>\n";
+    echo "<tr><td width=80% style='font-size:9px;color:#000000;'>Run on: $rpt_time, $rpt_date</td><td nowrap style='font-size:9px;color:#000000;'>$rpt_name</td></tr>\n";
+    echo "<tr><td width=80%></td><td nowrap style='font-size:9px;color:#000000;'>Date Range: $from_date &ndash; $to_date</td></tr>\n";
     if (!empty($tmp_csv)) {
-        echo "               <tr class=notprint><td width=80%></td><td nowrap style='font-size:9px;color:#000000;'><a style='color:#27408b;font-size:9px;
-                         text-decoration:underline;'
-                         href=\"get_csv.php?rpt=hrs_wkd&display_ip=$tmp_display_ip&csv=$tmp_csv&office=$office_name&group=$group_name&fullname=$fullname
-&from=$from_timestamp&to=$to_timestamp&tzo=$tzo&paginate=$tmp_paginate&round=$tmp_round_time&details=$tmp_show_details&rpt_run_on=$rpt_stamp
-&rpt_date=$rpt_date&from_date=$from_date\">Download CSV File</a></td></tr>\n";
+        echo "<tr class=notprint><td width=80%></td><td nowrap style='font-size:9px;color:#000000;'><a style='color:#27408b;font-size:9px; text-decoration:underline;' href=\"get_csv.php?rpt=hrs_wkd&display_ip=$tmp_display_ip&csv=$tmp_csv&office=$office_name&group=$group_name&fullname=$fullname&from=$from_timestamp&to=$to_timestamp&tzo=$tzo&paginate=$tmp_paginate&round=$tmp_round_time&details=$tmp_show_details&rpt_run_on=$rpt_stamp&rpt_date=$rpt_date&from_date=$from_date\">Download CSV File</a></td></tr>\n";
     }
     echo "</table>\n";
     echo "<table width=80% align=center class=misc_items border=0 cellpadding=3 cellspacing=0>\n";
@@ -827,139 +559,70 @@ if ($request == 'GET') {
 
     // retrieve a list of users //
 
-    $fullname = addslashes($fullname);
+    $where = array("tstamp IS NOT NULL");
+    $qparm = array();
 
-    if (strtolower($user_or_display) == "display") {
+    if ($fullname != "All") {
+        $where[] = "empfullname = ?";
+        $qparm[] = $fullname;
+    }
 
-        if (($office_name == "All") && ($group_name == "All") && ($fullname == "All")) {
+    if ($office_name != "All") {
+        $where[] = "office = ?";
+        $qparm[] = $office_name;
 
-            $query = "select empfullname, displayname from " . $db_prefix . "employees WHERE tstamp IS NOT NULL and empfullname <> 'admin'
-                  order by displayname asc";
-            $result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
-
-        } elseif ((empty($office_name)) && (empty($group_name)) && ($fullname == 'All')) {
-
-            $query = "select empfullname, displayname from " . $db_prefix . "employees WHERE tstamp IS NOT NULL and empfullname <> 'admin'
-                  order by displayname asc";
-            $result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
-
-        } elseif ((empty($office_name)) && (empty($group_name)) && ($fullname != 'All')) {
-
-            $query = "select empfullname, displayname from " . $db_prefix . "employees WHERE tstamp IS NOT NULL and empfullname = '" . $fullname . "'
-                  and empfullname <> 'admin' order by displayname asc";
-            $result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
-
-        } elseif (($office_name != "All") && ($group_name == "All") && ($fullname == "All")) {
-
-            $query = "select empfullname, displayname from " . $db_prefix . "employees where office = '" . $office_name . "' and tstamp IS NOT NULL
-                  and empfullname <> 'admin' order by displayname asc";
-            $result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
-
-        } elseif (($office_name != "All") && ($group_name != "All") && ($fullname == "All")) {
-
-            $query = "select empfullname, displayname from " . $db_prefix . "employees where office = '" . $office_name . "' and groups = '" . $group_name . "'
-                  and tstamp IS NOT NULL and empfullname <> 'admin' order by displayname asc";
-            $result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
-
-        } elseif (($office_name != "All") && ($group_name != "All") && ($fullname != "All")) {
-
-            $query = "select empfullname, displayname from " . $db_prefix . "employees where office = '" . $office_name . "' and groups = '" . $group_name . "'
-                  and empfullname = '" . $fullname . "' and empfullname <> 'admin' and tstamp IS NOT NULL order by displayname asc";
-            $result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
-
-        }
-
-    } else {
-
-        if (($office_name == "All") && ($group_name == "All") && ($fullname == "All")) {
-
-            $query = "select empfullname, displayname from " . $db_prefix . "employees WHERE tstamp IS NOT NULL and empfullname <> 'admin'
-                  order by empfullname asc";
-            $result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
-
-        } elseif ((empty($office_name)) && (empty($group_name)) && ($fullname == 'All')) {
-
-            $query = "select empfullname, displayname from " . $db_prefix . "employees WHERE tstamp IS NOT NULL and empfullname <> 'admin'
-                  order by empfullname asc";
-            $result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
-
-        } elseif ((empty($office_name)) && (empty($group_name)) && ($fullname != 'All')) {
-
-            $query = "select empfullname, displayname from " . $db_prefix . "employees WHERE tstamp IS NOT NULL and empfullname = '" . $fullname . "'
-                  and empfullname <> 'admin' order by empfullname asc";
-            $result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
-
-        } elseif (($office_name != "All") && ($group_name == "All") && ($fullname == "All")) {
-
-            $query = "select empfullname, displayname from " . $db_prefix . "employees where office = '" . $office_name . "' and tstamp IS NOT NULL
-                  and empfullname <> 'admin' order by empfullname asc";
-            $result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
-
-        } elseif (($office_name != "All") && ($group_name != "All") && ($fullname == "All")) {
-
-            $query = "select empfullname, displayname from " . $db_prefix . "employees where office = '" . $office_name . "' and groups = '" . $group_name . "'
-                  and tstamp IS NOT NULL and empfullname <> 'admin' order by empfullname asc";
-            $result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
-
-        } elseif (($office_name != "All") && ($group_name != "All") && ($fullname != "All")) {
-
-            $query = "select empfullname, displayname from " . $db_prefix . "employees where office = '" . $office_name . "' and groups = '" . $group_name . "'
-                  and empfullname = '" . $fullname . "' and empfullname <> 'admin' and tstamp IS NOT NULL order by empfullname asc";
-            $result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
-
+        if ($group_name != "All") {
+            $where[] = "groups = ?";
+            $qparm[] = $group_name;
         }
     }
 
-    while ($row = mysqli_fetch_array($result)) {
+    $where = implode(" AND ", $where) . " ORDER BY $emp_field_name ASC";
+    $result = tc_select("empfullname, displayname", "employees", $where, $qparm);
 
-        $employees_empfullname[] = stripslashes("" . $row['empfullname'] . "");
-        $employees_displayname[] = stripslashes("" . $row['displayname'] . "");
+    while ($row = mysqli_fetch_array($result)) {
+        $employees_empfullname[] = "" . $row['empfullname'] . "";
+        $employees_displayname[] = "" . $row['displayname'] . "";
         $employees_cnt++;
     }
 
     for ($x = 0; $x < $employees_cnt; $x++) {
 
-        $fullname = stripslashes($fullname);
         if (($employees_empfullname[$x] == $fullname) || ($fullname == "All")) {
 
             if (strtolower($user_or_display) == "display") {
-                echo "  <tr><td width=100% colspan=2 style=\"font-size:11px;color:#000000;border-style:solid;border-color:#888888;
-          border-width:0px 0px 1px 0px;\"><b>$employees_displayname[$x]</b></td></tr>\n";
+                echo "<tr><td width=100% colspan=2 style=\"font-size:11px;color:#000000;border-style:solid;border-color:#888888; border-width:0px 0px 1px 0px;\"><b>$employees_displayname[$x]</b></td></tr>\n";
             } else {
-                echo "  <tr><td width=100% colspan=2 style=\"font-size:11px;color:#000000;border-style:solid;border-color:#888888;
-          border-width:0px 0px 1px 0px;\"><b>$employees_empfullname[$x]</b></td></tr>\n";
+                echo "<tr><td width=100% colspan=2 style=\"font-size:11px;color:#000000;border-style:solid;border-color:#888888; border-width:0px 0px 1px 0px;\"><b>$employees_empfullname[$x]</b></td></tr>\n";
             }
             echo "  <tr><td width=75% nowrap align=left style='color:#27408b;'><b><u>Date</u></b></td>\n";
             echo "      <td width=25% nowrap align=left style='color:#27408b;'><b><u>Hours Worked</u></b></td></tr>\n";
             $row_color = $color2; // Initial row color
 
-            $employees_empfullname[$x] = addslashes($employees_empfullname[$x]);
-            $employees_displayname[$x] = addslashes($employees_displayname[$x]);
-
-            $query = "select " . $db_prefix . "info.fullname, " . $db_prefix . "info.`inout`, " . $db_prefix . "info.timestamp, " . $db_prefix . "info.notes,
-              " . $db_prefix . "info.ipaddress, " . $db_prefix . "punchlist.in_or_out, " . $db_prefix . "punchlist.punchitems, " . $db_prefix . "punchlist.color
-              from " . $db_prefix . "info, " . $db_prefix . "punchlist, " . $db_prefix . "employees
-              where " . $db_prefix . "info.fullname like ('" . $employees_empfullname[$x] . "') and " . $db_prefix . "info.timestamp >= '" . $from_timestamp . "'
-              and " . $db_prefix . "info.timestamp < '" . $to_timestamp . "' and " . $db_prefix . "info.`inout` = " . $db_prefix . "punchlist.punchitems
-              and " . $db_prefix . "employees.empfullname = '" . $employees_empfullname[$x] . "' and " . $db_prefix . "employees.empfullname <> 'admin'
-              order by " . $db_prefix . "info.timestamp asc";
-            $result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
+            $result = tc_query(<<<QUERY
+   SELECT i.fullname, i.inout, i.timestamp, i.notes, i.ipaddress, i.punchoffice, p.in_or_out, p.punchitems, p.color
+     FROM {$db_prefix}info      AS i
+     JOIN {$db_prefix}employees AS e ON e.empfullname = i.fullname
+     JOIN {$db_prefix}punchlist AS p ON i.inout = p.punchitems
+    WHERE e.empfullname  = ?
+      AND i.timestamp   >= ?
+      AND i.timestamp   <  ?
+      AND e.empfullname <> 'admin'
+ ORDER BY i.timestamp ASC
+QUERY
+            , array($employees_empfullname[$x], $from_timestamp, $to_timestamp));
 
             while ($row = mysqli_fetch_array($result)) {
-
-                $info_fullname[] = stripslashes("" . $row['fullname'] . "");
+                $info_fullname[] = "" . $row['fullname'] . "";
                 $info_inout[] = "" . $row['inout'] . "";
                 $info_timestamp[] = "" . $row['timestamp'] . "" + $tzo;
                 $info_notes[] = "" . $row['notes'] . "";
-                $info_ipaddress[] = "" . $row['ipaddress'] . "";
+                $info_ipaddress[] = "" . $row['ipaddress'] . " " . $row['punchoffice'] . "";
                 $punchlist_in_or_out[] = "" . $row['in_or_out'] . "";
                 $punchlist_punchitems[] = "" . $row['punchitems'] . "";
                 $punchlist_color[] = "" . $row['color'] . "";
                 $info_cnt++;
             }
-
-            $employees_empfullname[$x] = stripslashes($employees_empfullname[$x]);
-            $employees_displayname[$x] = stripslashes($employees_displayname[$x]);
 
             for ($y = 0; $y < $info_cnt; $y++) {
 
@@ -1011,7 +674,7 @@ if ($request == 'GET') {
                                         echo "      <td align=left width=13% nowrap style=\"color:$punchlist_color[$z];\">$info_inout[$z]</td>\n";
                                         echo "      <td nowrap align=right width=10% style='padding-right:25px;'>$time_formatted</td>\n";
                                         if (@$tmp_display_ip == "1") {
-                                            echo "      <td nowrap align=left width=15% style='padding-right:25px;
+                                            echo "      <td nowrap align=left width=25% style='padding-right:25px;
                                             color:$punchlist_color[$z];'>$info_ipaddress[$z]</td>\n";
                                         }
                                         echo "      <td width=77%>$info_notes[$z]</td></tr>\n";
@@ -1032,7 +695,7 @@ if ($request == 'GET') {
                                             $rpt_date (page $temp_page_count)</td>
                                             <td class=notdisplay_rpt nowrap style='font-size:9px;color:#000000;'>$rpt_name</td></tr>\n";
                                             echo "  <tr><td width=80%></td><td class=notdisplay_rpt nowrap
-                                            style='font-size:9px;color:#000000;'>Date Range: $from_date - $to_date</td></tr>\n";
+                                            style='font-size:9px;color:#000000;'>Date Range: $from_date &ndash; $to_date</td></tr>\n";
                                             echo "</table></td></tr>\n";
                                             if (strtolower($user_or_display) == "display") {
                                                 echo "  <tr><td class=notdisplay_rpt width=100% colspan=2
@@ -1121,7 +784,7 @@ if ($request == 'GET') {
                                         echo "      <td align=left width=13% nowrap style=\"color:$punchlist_color[$z];\">$info_inout[$z]</td>\n";
                                         echo "      <td nowrap align=right width=10% style='padding-right:25px;'>$time_formatted</td>\n";
                                         if (@$tmp_display_ip == "1") {
-                                            echo "      <td nowrap align=left width=15% style='padding-right:25px;
+                                            echo "      <td nowrap align=left width=25% style='padding-right:25px;
                                             color:$punchlist_color[$z];'>$info_ipaddress[$z]</td>\n";
                                         }
                                         echo "      <td width=77%>$info_notes[$z]</td></tr>\n";
@@ -1142,7 +805,7 @@ if ($request == 'GET') {
                                             $rpt_date (page $temp_page_count)</td>
                                             <td class=notdisplay_rpt nowrap style='font-size:9px;color:#000000;'>$rpt_name</td></tr>\n";
                                             echo "  <tr><td width=80%></td><td class=notdisplay_rpt nowrap
-                                            style='font-size:9px;color:#000000;'>Date Range: $from_date - $to_date</td></tr>\n";
+                                            style='font-size:9px;color:#000000;'>Date Range: $from_date &ndash; $to_date</td></tr>\n";
                                             echo "</table></td></tr>\n";
                                             if (strtolower($user_or_display) == "display") {
                                                 echo "  <tr><td class=notdisplay_rpt width=100% colspan=2
@@ -1205,7 +868,7 @@ if ($request == 'GET') {
                                     echo "      <td align=left width=13% nowrap style=\"color:$punchlist_color[$z];\">$info_inout[$z]</td>\n";
                                     echo "      <td nowrap align=right width=10% style='padding-right:25px;'>$time_formatted</td>\n";
                                     if (@$tmp_display_ip == "1") {
-                                        echo "      <td nowrap align=left width=15% style='padding-right:25px;
+                                        echo "      <td nowrap align=left width=25% style='padding-right:25px;
                                     color:$punchlist_color[$z];'>$info_ipaddress[$z]</td>\n";
                                     }
                                     echo "      <td width=77%>$info_notes[$z]</td></tr>\n";
@@ -1227,7 +890,7 @@ if ($request == 'GET') {
                                     <td class=notdisplay_rpt nowrap style='font-size:9px;color:#000000;'>$rpt_name</td></tr>\n";
                                         echo "  <tr><td width=80%></td><td class=notdisplay_rpt nowrap
                                     style='font-size:9px;color:#000000;'>Date
-                                    Range: $from_date - $to_date</td></tr>\n";
+                                    Range: $from_date &ndash; $to_date</td></tr>\n";
                                         echo "</table></td></tr>\n";
                                         if (strtolower($user_or_display) == "display") {
                                             echo "  <tr><td class=notdisplay_rpt width=100% colspan=2
@@ -1292,7 +955,7 @@ if ($request == 'GET') {
                                         echo "      <td align=left width=13% nowrap style=\"color:$punchlist_color[$z];\">$info_inout[$z]</td>\n";
                                         echo "      <td nowrap align=right width=10% style='padding-right:25px;'>$time_formatted</td>\n";
                                         if (@$tmp_display_ip == "1") {
-                                            echo "      <td nowrap align=left width=15% style='padding-right:25px;
+                                            echo "      <td nowrap align=left width=25% style='padding-right:25px;
                                             color:$punchlist_color[$z];'>$info_ipaddress[$z]</td>\n";
                                         }
                                         echo "      <td width=77%>$info_notes[$z]</td></tr>\n";
@@ -1313,7 +976,7 @@ if ($request == 'GET') {
                                             $rpt_date (page $temp_page_count)</td>
                                             <td class=notdisplay_rpt nowrap style='font-size:9px;color:#000000;'>$rpt_name</td></tr>\n";
                                             echo "  <tr><td width=80%></td><td class=notdisplay_rpt nowrap
-                                            style='font-size:9px;color:#000000;'>Date Range: $from_date - $to_date</td></tr>\n";
+                                            style='font-size:9px;color:#000000;'>Date Range: $from_date &ndash; $to_date</td></tr>\n";
                                             echo "</table></td></tr>\n";
                                             if (strtolower($user_or_display) == "display") {
                                                 echo "  <tr><td class=notdisplay_rpt width=100% colspan=2
@@ -1386,7 +1049,7 @@ if ($request == 'GET') {
                                         echo "      <td align=left width=13% nowrap style=\"color:$punchlist_color[$z];\">$info_inout[$z]</td>\n";
                                         echo "      <td nowrap align=right width=10% style='padding-right:25px;'>$time_formatted</td>\n";
                                         if (@$tmp_display_ip == "1") {
-                                            echo "      <td nowrap align=left width=15% style='padding-right:25px;
+                                            echo "      <td nowrap align=left width=25% style='padding-right:25px;
                                             color:$punchlist_color[$z];'>$info_ipaddress[$z]</td>\n";
                                         }
                                         echo "      <td width=77%>$info_notes[$z]</td></tr>\n";
@@ -1407,7 +1070,7 @@ if ($request == 'GET') {
                                             $rpt_date (page $temp_page_count)</td>
                                             <td class=notdisplay_rpt nowrap style='font-size:9px;color:#000000;'>$rpt_name</td></tr>\n";
                                             echo "  <tr><td width=80%></td><td class=notdisplay_rpt nowrap
-                                            style='font-size:9px;color:#000000;'>Date Range: $from_date - $to_date</td></tr>\n";
+                                            style='font-size:9px;color:#000000;'>Date Range: $from_date &ndash; $to_date</td></tr>\n";
                                             echo "</table></td></tr>\n";
                                             if (strtolower($user_or_display) == "display") {
                                                 echo "  <tr><td class=notdisplay_rpt width=100% colspan=2
@@ -1476,7 +1139,7 @@ if ($request == 'GET') {
                                     echo "      <td align=left width=13% nowrap style=\"color:$punchlist_color[$z];\">$info_inout[$z]</td>\n";
                                     echo "      <td nowrap align=right width=10% style='padding-right:25px;'>$time_formatted</td>\n";
                                     if (@$tmp_display_ip == "1") {
-                                        echo "      <td nowrap align=left width=15% style='padding-right:25px;
+                                        echo "      <td nowrap align=left width=25% style='padding-right:25px;
                                         color:$punchlist_color[$z];'>$info_ipaddress[$z]</td>\n";
                                     }
                                     echo "      <td width=77%>$info_notes[$z]</td></tr>\n";
@@ -1497,7 +1160,7 @@ if ($request == 'GET') {
                                         $rpt_date (page $temp_page_count)</td>
                                         <td class=notdisplay_rpt nowrap style='font-size:9px;color:#000000;'>$rpt_name</td></tr>\n";
                                         echo "  <tr><td width=80%></td><td class=notdisplay_rpt nowrap
-                                        style='font-size:9px;color:#000000;'>Date Range: $from_date - $to_date</td></tr>\n";
+                                        style='font-size:9px;color:#000000;'>Date Range: $from_date &ndash; $to_date</td></tr>\n";
                                         echo "</table></td></tr>\n";
                                         if (strtolower($user_or_display) == "display") {
                                             echo "  <tr><td class=notdisplay_rpt width=100% colspan=2
@@ -1564,7 +1227,7 @@ if ($request == 'GET') {
                                     echo "      <td align=left width=13% nowrap style=\"color:$punchlist_color[$z];\">$info_inout[$z]</td>\n";
                                     echo "      <td nowrap align=right width=10% style='padding-right:25px;'>$time_formatted</td>\n";
                                     if (@$tmp_display_ip == "1") {
-                                        echo "      <td nowrap align=left width=15% style='padding-right:25px;
+                                        echo "      <td nowrap align=left width=25% style='padding-right:25px;
                                         color:$punchlist_color[$z];'>$info_ipaddress[$z]</td>\n";
                                     }
                                     echo "      <td width=77%>$info_notes[$z]</td></tr>\n";
@@ -1585,7 +1248,7 @@ if ($request == 'GET') {
                                         $rpt_date (page $temp_page_count)</td>
                                         <td class=notdisplay_rpt nowrap style='font-size:9px;color:#000000;'>$rpt_name</td></tr>\n";
                                         echo "  <tr><td width=80%></td><td class=notdisplay_rpt nowrap
-                                        style='font-size:9px;color:#000000;'>Date Range: $from_date - $to_date</td></tr>\n";
+                                        style='font-size:9px;color:#000000;'>Date Range: $from_date &ndash; $to_date</td></tr>\n";
                                         echo "</table></td></tr>\n";
                                         if (strtolower($user_or_display) == "display") {
                                             echo "  <tr><td class=notdisplay_rpt width=100% colspan=2

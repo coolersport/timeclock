@@ -261,6 +261,11 @@
     border-width: 1px 0px 1px 0px;
 }
 
+.office_fav {
+    cursor: pointer;
+    font-size: 175%;
+}
+
 a:active {
     color: #748771;
     text-decoration: none;

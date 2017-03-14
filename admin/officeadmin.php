@@ -5,6 +5,39 @@ session_start();
 include 'header.php';
 include 'topmain.php';
 echo "<title>$title - Office Summary</title>\n";
+?>
+
+<script type="text/javascript">
+//<![CDATA[
+function update_favorites() {
+    var office = getCookie("office_name");
+    $(".office_fav").each(function(idx, item) {
+        item = $(item);
+        if (office != null && item.attr("data") == office) {
+            item.html("&#x2605;");
+            item.css("color", "#ff9800");
+        }
+        else {
+            item.html("&#x2606;");
+            item.css("color", "#000000");
+        }
+    });
+}
+
+function set_fav(name) {
+    if ($.trim(name).length > 0) {
+        setCookie("office_name", name, 7000, "/");
+    } else {
+        setCookie("office_name", "", -1, "/");
+    }
+    update_favorites();
+}
+
+$(update_favorites);
+//]]>
+</script>
+
+<?php
 
 $self = $_SERVER['PHP_SELF'];
 $request = $_SERVER['REQUEST_METHOD'];
@@ -70,8 +103,10 @@ echo "            <table width=60% align=center height=40 border=0 cellpadding=0
 echo "              <tr><th class=table_heading_no_color nowrap width=100% valign=top halign=left>Office Summary</th></tr>\n";
 echo "            </table>\n";
 echo "            <table class=table_border width=60% align=center border=0 cellpadding=0 cellspacing=0>\n";
-echo "              <tr><th class=table_heading nowrap width=7% align=left>&nbsp;</th>\n";
-echo "                <th class=table_heading nowrap width=79% align=left>Office Name</th>\n";
+echo "              <tr>\n";
+echo "                <th class=table_heading nowrap width=5% align=left>&nbsp;</th>\n";
+echo "                <th class=table_heading nowrap width=5% align=center><span class=\"office_fav\" onclick=\"set_fav('');\">&#x2606;</span></th>\n";
+echo "                <th class=table_heading nowrap width=75% align=left1>Office Name</th>\n";
 echo "                <th class=table_heading nowrap width=4% align=center>Groups</th>\n";
 echo "                <th class=table_heading nowrap width=4% align=center>Users</th>\n";
 echo "                <th class=table_heading nowrap width=3% align=center>Edit</th>\n";
@@ -79,44 +114,32 @@ echo "                <th class=table_heading nowrap width=3% align=center>Delet
 
 $row_count = 0;
 
-$query = "select * from " . $db_prefix . "offices order by officename";
-$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
+$result = tc_select("*", "offices", "1=1 ORDER BY officename");
 
 while ($row = mysqli_fetch_array($result)) {
 
-    $query2 = "select office from " . $db_prefix . "employees where office = '" . $row['officename'] . "'";
-    $result2 = mysqli_query($GLOBALS["___mysqli_ston"], $query2);
-    @$user_cnt = mysqli_num_rows($result2);
-
-    $query3 = "select * from " . $db_prefix . "groups where officeid = '" . $row['officeid'] . "'";
-    $result3 = mysqli_query($GLOBALS["___mysqli_ston"], $query3);
-    @$group_cnt = mysqli_num_rows($result3);
+    @$user_cnt  = mysqli_num_rows(tc_select("1", "employees", "office = ?", $row['officename']));
+    @$group_cnt = mysqli_num_rows(tc_select("1", "groups",  "officeid = ?", $row['officeid']));
 
     $row_count++;
     $row_color = ($row_count % 2) ? $color2 : $color1;
 
-    echo "              <tr class=table_border bgcolor='$row_color'><td nowrap class=table_rows width=7%>&nbsp;$row_count</td>\n";
-    echo "                <td nowrap class=table_rows width=79%>&nbsp;<a class=footer_links title='Edit Office: " . $row["officename"] . "'
-                    href=\"officeedit.php?officename=" . $row["officename"] . "\">" . $row["officename"] . "</a></td>\n";
-    echo "                <td class=table_rows width=4% align=center>$group_cnt</td>\n";
-    echo "                <td class=table_rows width=4% align=center>$user_cnt</td>\n";
+    $h_office = htmlentities($row["officename"]);
 
-    if ((strpos($user_agent, "MSIE 6")) || (strpos($user_agent, "MSIE 5")) || (strpos($user_agent, "MSIE 4")) || (strpos($user_agent, "MSIE 3"))) {
+    echo "<tr class=table_border bgcolor='$row_color'>\n";
+    echo "    <td nowrap class=table_rows width=5%>&nbsp;$row_count</td>\n";
+    echo "    <td nowrap class=table_rows width=5% align=center><span class=\"office_fav\" onclick=\"set_fav('$h_office');\" data=\"$h_office\"></span></td>\n";
+    echo "    <td nowrap class=table_rows width=75%>&nbsp;<a class=footer_links title='Edit Office: " . $row["officename"] . "'
+                  href=\"officeedit.php?officename=" . $row["officename"] . "\">" . $row["officename"] . "</a></td>\n";
+    echo "    <td class=table_rows width=4% align=center>$group_cnt</td>\n";
+    echo "    <td class=table_rows width=4% align=center>$user_cnt</td>\n";
 
-        echo "                <td class=table_rows width=3% align=center><a style='color:#27408b;text-decoration:underline;'
-                    href=\"officeedit.php?officename=" . $row["officename"] . "\" title=\"Edit Office: " . $row["officename"] . "\">
-                    Edit</a></td>\n";
-        echo "                <td class=table_rows width=3% align=center><a style='color:#27408b;text-decoration:underline;'
-                    href=\"officedelete.php?officename=" . $row["officename"] . "\" title=\"Delete Office: " . $row["officename"] . "\">
-                    Delete</a></td></tr>\n";
-    } else {
-        echo "                <td class=table_rows width=3% align=center><a href=\"officeedit.php?officename=" . $row["officename"] . "\"
-                    title=\"Edit Office: " . $row["officename"] . "\">
-                    <img border=0 src='../images/icons/application_edit.png' /></a></td>\n";
-        echo "                <td class=table_rows width=3% align=center><a href=\"officedelete.php?officename=" . $row["officename"] . "\"
-                    title=\"Delete Office: " . $row["officename"] . "\">
-                    <img border=0 src='../images/icons/delete.png' /></a></td></tr>\n";
-    }
+    echo "    <td class=table_rows width=3% align=center><a href=\"officeedit.php?officename=" . $row["officename"] . "\"
+                  title=\"Edit Office: " . $row["officename"] . "\">
+                  <img border=0 src='../images/icons/application_edit.png' /></a></td>\n";
+    echo "    <td class=table_rows width=3% align=center><a href=\"officedelete.php?officename=" . $row["officename"] . "\"
+                  title=\"Delete Office: " . $row["officename"] . "\">
+                  <img border=0 src='../images/icons/delete.png' /></a></td></tr>\n";
 }
 echo "            </table></td></tr>\n";
 include '../footer.php';

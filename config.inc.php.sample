@@ -418,6 +418,17 @@ $user_or_display = "user";
 $display_ip = "yes";
 
 
+/* Choose whether to log and include in the reports the office name of
+   where individual punches occur. This option is useful for auditing
+   purposes, but requires that machines set their office name in the office
+   administration page. Default is "no".
+
+   New in: v2.1
+*/
+
+$audit_office = "no";
+
+
 /* Reports can be exported to a comma delimited file (.csv). Setting this to "yes" will
    export the reports to .csv files. Default is "no"
 

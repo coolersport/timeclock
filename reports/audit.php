@@ -396,12 +396,11 @@ if ($request == 'GET') {
     $modified_by_ip = array();
     $modified_by_user = array();
     $modified_why = array();
+    $modified_office = array();
 
     $row_color = $color2; // Initial row color
 
-    $query = "select * from " . $db_prefix . "audit where modified_when >= '" . $from_timestamp . "' and modified_when <= '" . $to_timestamp . "'
-          order by modified_when asc";
-    $result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
+    $result = tc_select("*", "audit", "modified_when >= ? AND modified_when <= ? ORDER BY modified_when ASC", array($from_timestamp, $to_timestamp));
 
     while ($row = mysqli_fetch_array($result)) {
 
@@ -409,7 +408,8 @@ if ($request == 'GET') {
         $modified_from[] = "" . $row["modified_from"] . "";
         $modified_to[] = "" . $row["modified_to"] . "";
         $modified_by_ip[] = "" . $row["modified_by_ip"] . "";
-        $modified_by_user[] = stripslashes("" . $row["modified_by_user"] . "");
+        $modified_office[] = "" . $row["modified_office"] . "";
+        $modified_by_user[] = "" . $row["modified_by_user"] . "";
         $modified_why[] = "" . $row["modified_why"] . "";
         $user_modified[] = "" . $row["user_modified"] . "";
         $cnt++;
@@ -490,7 +490,7 @@ if ($request == 'GET') {
         text-decoration:underline;'>Modified When</td>\n";
             echo "    <td nowrap width=15% align=left style='padding-left:10px;font-size:11px;color:#27408b;
         text-decoration:underline;'>Modified By</td>\n";
-            echo "    <td nowrap width=15% align=left style='padding-left:10px;font-size:11px;color:#27408b;
+            echo "    <td nowrap width=20% align=left style='padding-left:10px;font-size:11px;color:#27408b;
         text-decoration:underline;'>Modified By IP</td>\n";
             echo "    <td nowrap width=15% align=left style='padding-left:10px;font-size:11px;color:#27408b;
         text-decoration:underline;'>Modified From</td>\n";
@@ -510,10 +510,10 @@ if ($request == 'GET') {
         padding-left:10px;'>$modified_status</td>\n";
         echo "  <td nowrap align=left width=15% style='background-color:$row_color;color:" . $row["color"] . ";
         padding-left:10px;'>$modified_when_date,&nbsp;$modified_when_time</td>\n";
-        echo "    <td nowrap align=left width=15% style='background-color:$row_color;color:" . $row["color"] . ";
+        echo "    <td nowrap align=left width=10% style='background-color:$row_color;color:" . $row["color"] . ";
         padding-left:10px;'>$modified_by_user[$x]</td>\n";
-        echo "    <td nowrap align=left width=15% style='background-color:$row_color;color:" . $row["color"] . ";
-        padding-left:10px;'>$modified_by_ip[$x]</td>\n";
+        echo "    <td nowrap align=left width=20% style='background-color:$row_color;color:" . $row["color"] . ";
+        padding-left:10px;'>$modified_by_ip[$x]" . (empty($modified_office[$x]) ? "" : " ($modified_office[$x])") . "</td>\n";
         if (!empty($modified_from[$x])) {
             echo "    <td nowrap align=left width=15% style='background-color:$row_color;color:" . $row["color"] . ";
         padding-left:10px;'>$modified_from_date,&nbsp;$modified_from_time</td>\n";

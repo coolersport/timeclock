@@ -7,9 +7,13 @@ echo "  <tr>";
 // It will also link you back to your index page. //
 
 if ($logo == "none") {
-    echo "    <td height=35 align=left></td>\n";
+    echo "<td height=35 align=left></td>\n";
 } else {
     echo "<td align=left><a href='index.php'><img border=0 src='$logo'></a></td>\n";
+}
+
+if (!empty($_COOKIE['office_name'])) {
+    echo tag("td", $_COOKIE['office_name']);
 }
 
 // if db is out of date, report it here //

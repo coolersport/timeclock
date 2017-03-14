@@ -148,6 +148,10 @@ function value_or_null($val) {
     return ((strlen(trim(@$val)) == 0) ? null : $val);
 }
 
+function one_or_empty($val) {
+    return ((@$val == "1") ? "1" : "");
+}
+
 function has_value($val) {
     return (strlen(trim(@$val)) != 0);
 }

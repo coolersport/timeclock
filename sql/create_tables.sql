@@ -17,6 +17,7 @@ CREATE TABLE `audit` (
   `modified_by_ip` varchar(39) COLLATE utf8_bin NOT NULL DEFAULT '',
   `modified_by_user` varchar(50) COLLATE utf8_bin NOT NULL DEFAULT '',
   `modified_why` varchar(250) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `modified_office` varchar(50) COLLATE utf8_bin NOT NULL DEFAULT '',
   `user_modified` varchar(50) COLLATE utf8_bin NOT NULL DEFAULT ''
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
@@ -76,7 +77,8 @@ CREATE TABLE `info` (
   `inout` varchar(50) COLLATE utf8_bin NOT NULL DEFAULT '',
   `timestamp` bigint(14) DEFAULT NULL,
   `notes` varchar(250) COLLATE utf8_bin DEFAULT NULL,
-  `ipaddress` varchar(39) COLLATE utf8_bin NOT NULL DEFAULT ''
+  `ipaddress` varchar(39) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `punchoffice` varchar(50) COLLATE utf8_bin NOT NULL DEFAULT ''
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 CREATE INDEX info_fullname  ON info (fullname);

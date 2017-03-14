@@ -26,27 +26,16 @@ if (!isset($_GET['printer_friendly'])) {
 
 // code to allow sorting by Name, In/Out, Date, Notes //
 
-if ($show_display_name == "yes") {
-    if (!isset($_GET['sortcolumn'])) {
-        $sortcolumn = "displayname";
-    } else {
-        $sortcolumn = $_GET['sortcolumn'];
-    }
-
+if (!isset($_GET['sortcolumn']) or preg_match('/[^\w]/', $_GET['sortcolumn'])) {
+    $sortcolumn = (($show_display_name == "yes") ? "displayname" : "fullname");
 } else {
-
-    if (!isset($_GET['sortcolumn'])) {
-        $sortcolumn = "fullname";
-    } else {
-        $sortcolumn = $_GET['sortcolumn'];
-    }
-
+    $sortcolumn = addslashes($_GET['sortcolumn']);
 }
 
-if (!isset($_GET['sortdirection'])) {
+if (!isset($_GET['sortdirection']) or preg_match('/[^\w]/', $_GET['sortdirection'])) {
     $sortdirection = "asc";
 } else {
-    $sortdirection = $_GET['sortdirection'];
+    $sortdirection = addslashes($_GET['sortdirection']);
 }
 
 if ($sortdirection == "asc") {
@@ -57,103 +46,37 @@ if ($sortdirection == "asc") {
 
 // determine what users, office, and/or group will be displayed on main page //
 
-if (($display_current_users == "yes") && ($display_office == "all") && ($display_group == "all")) {
+$where = array("e.disabled <> '1'", "e.empfullname <> 'admin'");
+$qparm = array();
+
+if (yes_no_bool($display_current_users)) {
     $current_users_date = strtotime(date($datefmt));
-    $calc = 86400;
-    $a = $current_users_date + $calc - @$tzo;
-    $b = $current_users_date - @$tzo;
-
-    $query = "select " . $db_prefix . "info.*, " . $db_prefix . "employees.*, " . $db_prefix . "punchlist.*
-              from " . $db_prefix . "info, " . $db_prefix . "employees, " . $db_prefix . "punchlist
-              where " . $db_prefix . "info.timestamp = " . $db_prefix . "employees.tstamp and " . $db_prefix . "info.fullname = " . $db_prefix . "employees.empfullname
-              and " . $db_prefix . "info.`inout` = " . $db_prefix . "punchlist.punchitems and ((" . $db_prefix . "info.timestamp < '" . $a . "') and
-              (" . $db_prefix . "info.timestamp >= '" . $b . "')) and " . $db_prefix . "employees.disabled <> '1' and " . $db_prefix . "employees.empfullname <> 'admin'
-              order by `$sortcolumn` $sortdirection";
-    $result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
-} elseif (($display_current_users == "yes") && ($display_office != "all") && ($display_group == "all")) {
-
-    $current_users_date = strtotime(date($datefmt));
-    $calc = 86400;
-    $a = $current_users_date + $calc - @$tzo;
-    $b = $current_users_date - @$tzo;
-
-    $query = "select " . $db_prefix . "info.*, " . $db_prefix . "employees.*, " . $db_prefix . "punchlist.*
-              from " . $db_prefix . "info, " . $db_prefix . "employees, " . $db_prefix . "punchlist
-              where " . $db_prefix . "info.timestamp = " . $db_prefix . "employees.tstamp and " . $db_prefix . "info.fullname = " . $db_prefix . "employees.empfullname
-              and " . $db_prefix . "info.`inout` = " . $db_prefix . "punchlist.punchitems and " . $db_prefix . "employees.office = '" . $display_office . "'
-              and ((" . $db_prefix . "info.timestamp < '" . $a . "') and (" . $db_prefix . "info.timestamp >= '" . $b . "'))
-              and " . $db_prefix . "employees.disabled <> '1' and " . $db_prefix . "employees.empfullname <> 'admin'
-              order by `$sortcolumn` $sortdirection";
-    $result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
-} elseif (($display_current_users == "yes") && ($display_office == "all") && ($display_group != "all")) {
-
-    $current_users_date = strtotime(date($datefmt));
-    $calc = 86400;
-    $a = $current_users_date + $calc - @$tzo;
-    $b = $current_users_date - @$tzo;
-
-    $query = "select " . $db_prefix . "info.*, " . $db_prefix . "employees.*, " . $db_prefix . "punchlist.*
-              from " . $db_prefix . "info, " . $db_prefix . "employees, " . $db_prefix . "punchlist
-              where " . $db_prefix . "info.timestamp = " . $db_prefix . "employees.tstamp and " . $db_prefix . "info.fullname = " . $db_prefix . "employees.empfullname
-              and " . $db_prefix . "info.`inout` = " . $db_prefix . "punchlist.punchitems and " . $db_prefix . "employees.groups = '" . $display_group . "'
-              and ((" . $db_prefix . "info.timestamp < '" . $a . "') and (" . $db_prefix . "info.timestamp >= '" . $b . "'))
-              and " . $db_prefix . "employees.disabled <> '1' and " . $db_prefix . "employees.empfullname <> 'admin'
-              order by `$sortcolumn` $sortdirection";
-    $result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
-} elseif (($display_current_users == "yes") && ($display_office != "all") && ($display_group != "all")) {
-
-    $current_users_date = strtotime(date($datefmt));
-    $calc = 86400;
-    $a = $current_users_date + $calc - @$tzo;
-    $b = $current_users_date - @$tzo;
-
-    $query = "select " . $db_prefix . "info.*, " . $db_prefix . "employees.*, " . $db_prefix . "punchlist.*
-              from " . $db_prefix . "info, " . $db_prefix . "employees, " . $db_prefix . "punchlist
-              where " . $db_prefix . "info.timestamp = " . $db_prefix . "employees.tstamp and " . $db_prefix . "info.fullname = " . $db_prefix . "employees.empfullname
-              and " . $db_prefix . "info.`inout` = " . $db_prefix . "punchlist.punchitems and " . $db_prefix . "employees.office = '" . $display_office . "'
-              and " . $db_prefix . "employees.groups = '" . $display_group . "' and ((" . $db_prefix . "info.timestamp < '" . $a . "')
-              and (" . $db_prefix . "info.timestamp >= '" . $b . "')) and " . $db_prefix . "employees.disabled <> '1'
-              and " . $db_prefix . "employees.empfullname <> 'admin'
-              order by `$sortcolumn` $sortdirection";
-    $result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
-} elseif (($display_current_users == "no") && ($display_office == "all") && ($display_group == "all")) {
-
-    $query = "select " . $db_prefix . "info.*, " . $db_prefix . "employees.*, " . $db_prefix . "punchlist.*
-              from " . $db_prefix . "info, " . $db_prefix . "employees, " . $db_prefix . "punchlist
-              where " . $db_prefix . "info.timestamp = " . $db_prefix . "employees.tstamp and " . $db_prefix . "info.fullname = " . $db_prefix . "employees.empfullname
-              and " . $db_prefix . "info.`inout` = " . $db_prefix . "punchlist.punchitems and " . $db_prefix . "employees.disabled <> '1'
-              and " . $db_prefix . "employees.empfullname <> 'admin'
-              order by `$sortcolumn` $sortdirection";
-    $result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
-} elseif (($display_current_users == "no") && ($display_office != "all") && ($display_group == "all")) {
-
-    $query = "select " . $db_prefix . "info.*, " . $db_prefix . "employees.*, " . $db_prefix . "punchlist.*
-              from " . $db_prefix . "info, " . $db_prefix . "employees, " . $db_prefix . "punchlist
-              where " . $db_prefix . "info.timestamp = " . $db_prefix . "employees.tstamp and " . $db_prefix . "info.fullname = " . $db_prefix . "employees.empfullname
-              and " . $db_prefix . "info.`inout` = " . $db_prefix . "punchlist.punchitems and " . $db_prefix . "employees.office = '" . $display_office . "'
-              and " . $db_prefix . "employees.disabled <> '1' and " . $db_prefix . "employees.empfullname <> 'admin'
-              order by `$sortcolumn` $sortdirection";
-    $result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
-} elseif (($display_current_users == "no") && ($display_office == "all") && ($display_group != "all")) {
-
-    $query = "select " . $db_prefix . "info.*, " . $db_prefix . "employees.*, " . $db_prefix . "punchlist.*
-              from " . $db_prefix . "info, " . $db_prefix . "employees, " . $db_prefix . "punchlist
-              where " . $db_prefix . "info.timestamp = " . $db_prefix . "employees.tstamp and " . $db_prefix . "info.fullname = " . $db_prefix . "employees.empfullname
-              and " . $db_prefix . "info.`inout` = " . $db_prefix . "punchlist.punchitems and " . $db_prefix . "employees.groups = '" . $display_group . "'
-              and " . $db_prefix . "employees.disabled <> '1' and " . $db_prefix . "employees.empfullname <> 'admin'
-              order by `$sortcolumn` $sortdirection";
-    $result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
-} elseif (($display_current_users == "no") && ($display_office != "all") && ($display_group != "all")) {
-
-    $query = "select " . $db_prefix . "info.*, " . $db_prefix . "employees.*, " . $db_prefix . "punchlist.*
-              from " . $db_prefix . "info, " . $db_prefix . "employees, " . $db_prefix . "punchlist
-              where " . $db_prefix . "info.timestamp = " . $db_prefix . "employees.tstamp and " . $db_prefix . "info.fullname = " . $db_prefix . "employees.empfullname
-              and " . $db_prefix . "info.`inout` = " . $db_prefix . "punchlist.punchitems and " . $db_prefix . "employees.office = '" . $display_office . "'
-              and " . $db_prefix . "employees.groups = '" . $display_group . "' and " . $db_prefix . "employees.disabled <> '1'
-              and " . $db_prefix . "employees.empfullname <> 'admin'
-              order by `$sortcolumn` $sortdirection";
-    $result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
+    $where[] = "i.timestamp < ?";
+    $qparm[] = $current_users_date + 86400 - @$tzo;
+    $where[] = "i.timestamp >= ?";
+    $qparm[] = $current_users_date - @$tzo;
 }
+
+if ($display_office != "all") {
+    $where[] = "e.office = ?";
+    $qparm[] = $display_office;
+}
+
+if ($display_group != "all") {
+    $where[] = "e.groups = ?";
+    $qparm[] = $display_group;
+}
+
+$where = implode(" AND ", $where);
+$result = tc_query(<<<QUERY
+   SELECT i.*, e.*, p.*
+     FROM {$db_prefix}info      AS i
+     JOIN {$db_prefix}employees AS e ON (e.empfullname = i.fullname AND i.timestamp = e.tstamp)
+     JOIN {$db_prefix}punchlist AS p ON i.inout = p.punchitems
+    WHERE $where
+ ORDER BY `$sortcolumn` $sortdirection
+QUERY
+, $qparm);
 
 $tclock_stamp = time() + @$tzo;
 $tclock_time = date($timefmt, $tclock_stamp);
@@ -178,4 +101,3 @@ if (!isset($_GET['printer_friendly'])) {
 }
 
 ?>
-

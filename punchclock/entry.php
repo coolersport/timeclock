@@ -72,6 +72,8 @@ if ($authorized && isset($_POST['inout'])) {
     $q_notes = mysqli_real_escape_string($GLOBALS["___mysqli_ston"], $notes);
     $h_notes = htmlentities($notes);
 
+    $q_office = mysqli_real_escape_string($GLOBALS["___mysqli_ston"], isset($_COOKIE['office_name']) ? $_COOKIE['office_name'] : "");
+
     $q_empfullname = mysqli_real_escape_string($GLOBALS["___mysqli_ston"], $empfullname);
 
     // Validate and get inout display color.
@@ -90,8 +92,8 @@ if ($authorized && isset($_POST['inout'])) {
     $ip = (strtolower($ip_logging) == "yes") ? "'" . get_ipaddress() . "'" : 'NULL';
 
     $insert_query = <<<End_Of_SQL
-insert into {$db_prefix}info (fullname, `inout`, timestamp, notes, ipaddress)
-values ('$q_empfullname', '$q_inout', '$tz_stamp', '$q_notes', $ip)
+insert into {$db_prefix}info (fullname, `inout`, timestamp, notes, ipaddress, punchoffice)
+values ('$q_empfullname', '$q_inout', '$tz_stamp', '$q_notes', $ip, '$q_office')
 End_Of_SQL;
 
     $update_query = <<<End_Of_SQL

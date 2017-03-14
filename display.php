@@ -33,12 +33,17 @@ while ($row = mysqli_fetch_array($result)) {
             echo "                <td nowrap width=5% align=right style='padding-left:10px;'><a style='font-size:11px;color:#27408b;'
                                     href='$current_page?sortcolumn=tstamp&sortdirection=$sortnewdirection'>Date</a></td>\n";
 
-            if ($display_office_name == "yes") {
+            if (yes_no_bool($display_office_name)) {
                 echo "                <td nowrap width=10% align=left style='padding-left:10px;'><a style='font-size:11px;color:#27408b;'
                                         href='$current_page?sortcolumn=office&sortdirection=$sortnewdirection'>Office</a></td>\n";
             }
 
-            if ($display_group_name == "yes") {
+            if (yes_no_bool($audit_office)) {
+                echo "                <td nowrap width=10% align=left style='padding-left:10px;'><a style='font-size:11px;color:#27408b;'
+                                        href='$current_page?sortcolumn=office&sortdirection=$sortnewdirection'>Location</a></td>\n";
+            }
+
+            if (yes_no_bool($display_group_name)) {
                 echo "                <td nowrap width=10% align=left style='padding-left:10px;'><a style='font-size:11px;color:#27408b;'
                                         href='$current_page?sortcolumn=groups&sortdirection=$sortnewdirection'>Group</a></td>\n";
             }
@@ -64,12 +69,17 @@ while ($row = mysqli_fetch_array($result)) {
         echo "                <td nowrap width=5% align=right style='padding-left:10px;font-size:11px;color:#27408b;
                             text-decoration:underline;'>Date</td>\n";
 
-        if ($display_office_name == "yes") {
+        if (yes_no_bool($display_office_name)) {
             echo "                <td nowrap width=10% align=left style='padding-left:10px;font-size:11px;color:#27408b;
                                 text-decoration:underline;'>Office</td>\n";
         }
 
-        if ($display_group_name == "yes") {
+        if (yes_no_bool($audit_office)) {
+            echo "                <td nowrap width=10% align=left style='padding-left:10px;font-size:11px;color:#27408b;
+                                text-decoration:underline;'>Location</td>\n";
+        }
+
+        if (yes_no_bool($display_group_name)) {
             echo "                <td nowrap width=10% align=left style='padding-left:10px;font-size:11px;color:#27408b;
                                 text-decoration:underline;'>Group</td>\n";
         }
@@ -88,12 +98,10 @@ while ($row = mysqli_fetch_array($result)) {
     $time = date($timefmt, $display_stamp);
     $date = date($datefmt, $display_stamp);
 
-    if ($show_display_name == "yes") {
-        echo stripslashes("              <tr class=display_row><td nowrap width=20% bgcolor='$row_color' style='padding-left:10px; 
-                          padding-right:10px;'>" . $row["displayname"] . "</td>\n");
+    if (yes_no_bool($show_display_name)) {
+        echo "              <tr class=display_row><td nowrap width=20% bgcolor='$row_color' style='padding-left:10px; padding-right:10px;'>" . $row["displayname"] . "</td>\n";
     } elseif ($show_display_name == "no") {
-        echo stripslashes("              <tr class=display_row><td nowrap width=20% bgcolor='$row_color' style='padding-left:10px;
-                          padding-right:10px;'>" . $row["empfullname"] . "</td>\n");
+        echo "              <tr class=display_row><td nowrap width=20% bgcolor='$row_color' style='padding-left:10px; padding-right:10px;'>" . $row["empfullname"] . "</td>\n";
     }
 
     echo "                <td nowrap align=left width=7% style='background-color:$row_color;color:" . $row["color"] . ";
@@ -101,15 +109,19 @@ while ($row = mysqli_fetch_array($result)) {
     echo "                <td nowrap align=right width=5% bgcolor='$row_color' style='padding-right:10px;'>" . $time . "</td>\n";
     echo "                <td nowrap align=right width=5% bgcolor='$row_color' style='padding-left:10px;'>" . $date . "</td>\n";
 
-    if ($display_office_name == "yes") {
+    if (yes_no_bool($display_office_name)) {
         echo "                <td nowrap align=left width=10% bgcolor='$row_color' style='padding-left:10px;'>" . $row["office"] . "</td>\n";
     }
 
-    if ($display_group_name == "yes") {
+    if (yes_no_bool($audit_office)) {
+        echo "                <td nowrap align=left width=10% bgcolor='$row_color' style='padding-left:10px;'>" . $row["punchoffice"] . "</td>\n";
+    }
+
+    if (yes_no_bool($display_group_name)) {
         echo "                <td nowrap align=left width=10% bgcolor='$row_color' style='padding-left:10px;'>" . $row["groups"] . "</td>\n";
     }
 
-    echo stripslashes("                <td bgcolor='$row_color' style='padding-left:10px;'>" . $row["notes"] . "</td>\n");
+    echo "                <td bgcolor='$row_color' style='padding-left:10px;'>" . $row["notes"] . "</td>\n";
     echo "              </tr>\n";
 
     $row_count++;
@@ -130,5 +142,4 @@ if (!isset($_GET['printer_friendly'])) {
     echo "          </td></tr>\n";
 }
 
-((mysqli_free_result($result) || (is_object($result) && (get_class($result) == "mysqli_result"))) ? true : false);
 ?>

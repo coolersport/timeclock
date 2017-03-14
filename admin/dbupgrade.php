@@ -222,6 +222,7 @@ if (!empty($count)) {
         $changes_made += ensure_field("audit", "modified_by_user", "varchar(50)",  "COLLATE utf8_bin NOT NULL DEFAULT ''");
         $changes_made += ensure_field("audit", "modified_why",     "varchar(250)", "COLLATE utf8_bin NOT NULL DEFAULT ''");
         $changes_made += ensure_field("audit", "user_modified",    "varchar(50)",  "COLLATE utf8_bin NOT NULL DEFAULT ''");
+        $changes_made += ensure_field("audit", "modified_office",  "varchar(50)",  "COLLATE utf8_bin NOT NULL DEFAULT ''");
 
         $changes_made += ensure_index("audit", "modified_when");
 
@@ -291,11 +292,12 @@ if (!empty($count)) {
             }
         }
 
-        $changes_made += ensure_field("info", "fullname",  "varchar(50)",  "COLLATE utf8_bin NOT NULL DEFAULT ''");
-        $changes_made += ensure_field("info", "inout",     "varchar(50)",  "COLLATE utf8_bin NOT NULL DEFAULT ''");
-        $changes_made += ensure_field("info", "timestamp", "bigint(14)",   "DEFAULT NULL");
-        $changes_made += ensure_field("info", "notes",     "varchar(250)", "COLLATE utf8_bin DEFAULT NULL");
-        $changes_made += ensure_field("info", "ipaddress", "varchar(39)",  "COLLATE utf8_bin NOT NULL DEFAULT ''");
+        $changes_made += ensure_field("info", "fullname",    "varchar(50)",  "COLLATE utf8_bin NOT NULL DEFAULT ''");
+        $changes_made += ensure_field("info", "inout",       "varchar(50)",  "COLLATE utf8_bin NOT NULL DEFAULT ''");
+        $changes_made += ensure_field("info", "timestamp",   "bigint(14)",   "DEFAULT NULL");
+        $changes_made += ensure_field("info", "notes",       "varchar(250)", "COLLATE utf8_bin DEFAULT NULL");
+        $changes_made += ensure_field("info", "ipaddress",   "varchar(39)",  "COLLATE utf8_bin NOT NULL DEFAULT ''");
+        $changes_made += ensure_field("info", "punchoffice", "varchar(50)",  "COLLATE utf8_bin NOT NULL DEFAULT ''");
 
         $changes_made += ensure_index("info", "fullname");
         $changes_made += ensure_index("info", "timestamp");
