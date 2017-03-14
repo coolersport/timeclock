@@ -446,7 +446,7 @@ function ip_range($network, $ip) {
 }
 
 function setTimeZone() {
-
+    global $tzo;
     global $use_client_tz;
     global $use_server_tz;
 
