@@ -47,7 +47,7 @@ if ($request == 'GET') {
         exit;
     }
 
-    $get_user = stripslashes($_GET['username']);
+    $get_user = $_GET['username'];
 
     disabled_acct($get_user);
 
@@ -97,19 +97,13 @@ if ($request == 'GET') {
                 alt='Upgrade Database' />&nbsp;&nbsp;&nbsp;<a class=admin_headings href='dbupgrade.php'>Upgrade Database</a></td></tr>\n";
     echo "      </table></td>\n";
 
-    $get_user = addslashes($get_user);
-
-    $query = "select * from " . $db_prefix . "employees where empfullname = '" . $get_user . "' order by empfullname";
-    $result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
-
+    $result = tc_select("empfullname, displayname", "employees", "empfullname = ?", $get_user);
     while ($row = mysqli_fetch_array($result)) {
-
-        $username = stripslashes("" . $row['empfullname'] . "");
-        $displayname = stripslashes("" . $row['displayname'] . "");
+        $username = "" . $row['empfullname'] . "";
+        $displayname = "" . $row['displayname'] . "";
     }
-    ((mysqli_free_result($result) || (is_object($result) && (get_class($result) == "mysqli_result"))) ? true : false);
 
-    $get_user = stripslashes($_GET['username']);
+    $get_user = $_GET['username'];
 
     echo "    <td align=left class=right_main scope=col>\n";
     echo "      <table width=100% height=100% border=0 cellpadding=10 cellspacing=1>\n";
@@ -144,21 +138,12 @@ if ($request == 'GET') {
     echo "                <input type='hidden' name='timefmt_24hr_text' value=\"$timefmt_24hr_text\">\n";
     echo "                <input type='hidden' name='timefmt_size' value=\"$timefmt_size\">\n";
 
-    // query to populate dropdown with statuses //
-
-    $query2 = "select * from " . $db_prefix . "punchlist order by punchitems asc";
-    $result2 = mysqli_query($GLOBALS["___mysqli_ston"], $query2);
-
     echo "              <tr><td class=table_rows height=25 width=20% style='padding-left:32px;' nowrap>Status:</td><td colspan=2 width=80%
                       style='color:red;font-family:Tahoma;font-size:10px;padding-left:20px;'>
-                      <select name='post_statusname'>\n";
-    echo "                        <option value ='1'>Choose One</option>\n";
-
-    while ($row2 = mysqli_fetch_array($result2)) {
-        echo "                        <option>" . $row2['punchitems'] . "</option>\n";
-    }
-    echo "                      </select>&nbsp;*</td></tr>\n";
-    ((mysqli_free_result($result2) || (is_object($result2) && (get_class($result2) == "mysqli_result"))) ? true : false);
+          <select name='post_statusname'>\n";
+    echo "<option value ='1'>Choose One</option>\n";
+    echo html_options(tc_select("punchitems", "punchlist", "1=1 ORDER BY punchitems ASC"));
+    echo "</select>&nbsp;*</td></tr>\n";
 
     echo "              <tr><td class=table_rows height=25 width=20% style='padding-left:32px;' nowrap>Notes:</td><td align=left colspan=2 width=80%
                       style='padding-left:20px;'><input type='text' size='17' maxlength='250' name='post_notes'></td></tr>\n";
@@ -175,9 +160,9 @@ if ($request == 'GET') {
     exit;
 } elseif ($request == 'POST') {
 
-    $get_user = stripslashes($_POST['get_user']);
-    $post_username = stripslashes($_POST['post_username']);
-    $post_displayname = stripslashes($_POST['post_displayname']);
+    $get_user = $_POST['get_user'];
+    $post_username = $_POST['post_username'];
+    $post_displayname = $_POST['post_displayname'];
     $post_date = $_POST['post_date'];
     $post_time = $_POST['post_time'];
     $post_statusname = $_POST['post_statusname'];
@@ -187,18 +172,10 @@ if ($request == 'GET') {
     $timefmt_size = $_POST['timefmt_size'];
     $date_format = $_POST['date_format'];
 
-    $get_user = addslashes($get_user);
-    $post_username = addslashes($post_username);
-    $post_displayname = addslashes($post_displayname);
-
     // begin post validation //
 
     if (!empty($get_user)) {
-        $query = "select * from " . $db_prefix . "employees where empfullname = '" . $get_user . "'";
-        $result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
-        while ($row = mysqli_fetch_array($result)) {
-            $tmp_get_user = "" . $row['empfullname'] . "";
-        }
+        $tmp_get_user = tc_select_value("empfullname", "employees", "empfullname = ?", $get_user);
         if (!isset($tmp_get_user)) {
             echo "Something is fishy here.\n";
             exit;
@@ -206,11 +183,7 @@ if ($request == 'GET') {
     }
 
     if (!empty($post_username)) {
-        $query = "select * from " . $db_prefix . "employees where empfullname = '" . $post_username . "'";
-        $result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
-        while ($row = mysqli_fetch_array($result)) {
-            $tmp_username = "" . $row['empfullname'] . "";
-        }
+        $tmp_username = tc_select_value("empfullname", "employees", "empfullname = ?", $post_username);
         if (!isset($tmp_username)) {
             echo "Something is fishy here.\n";
             exit;
@@ -218,34 +191,18 @@ if ($request == 'GET') {
     }
 
     if (!empty($post_displayname)) {
-        $query = "select * from " . $db_prefix . "employees where empfullname = '" . $post_username . "' and displayname = '" . $post_displayname . "'";
-        $result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
-        while ($row = mysqli_fetch_array($result)) {
-            $tmp_post_displayname = "" . $row['displayname'] . "";
-        }
+        $tmp_post_displayname = tc_select_value("displayname", "employees", "empfullname = ? AND displayname = ?", array($post_username, $post_displayname));
         if (!isset($tmp_post_displayname)) {
             echo "Something is fishy here.\n";
             exit;
         }
     }
 
-    if (!empty($post_statusname)) {
-        if ($post_statusname != '1') {
-
-            $query = "select * from " . $db_prefix . "punchlist where punchitems = '" . $post_statusname . "'";
-            $result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
-
-            while ($row = mysqli_fetch_array($result)) {
-                $punchitems = "" . $row['punchitems'] . "";
-                $color = "" . $row['color'] . "";
-            }
-            ((mysqli_free_result($result) || (is_object($result) && (get_class($result) == "mysqli_result"))) ? true : false);
-            if (!isset($punchitems)) {
-                echo "Something is fishy here.\n";
-                exit;
-            }
-        } else {
-            $punchitems = '1';
+    if (!empty($post_statusname) and $post_statusname != '1') {
+        $color = tc_select_value("color", "punchlist", "punchitems = ?", $post_statusname);
+        if (!isset($color)) {
+            echo "Something is fishy here.\n";
+            exit;
         }
     }
 
@@ -274,15 +231,6 @@ if ($request == 'GET') {
     }
 
     // end post validation //
-
-    //if ($get_user != $post_username) {exit;}
-    //if (($timefmt_24hr !== '0') && ($timefmt_24hr !== '1')) {exit;}
-    //if (($timefmt_24hr_text !== '24 hr format') && ($timefmt_24hr_text !== '12 hr format')) {exit;}
-    //if (($timefmt_size != '5') && ($timefmt_size != '7')) {exit;}
-
-    $get_user = stripslashes($get_user);
-    $post_username = stripslashes($post_username);
-    $post_displayname = stripslashes($post_displayname);
 
     echo "<table width=100% height=89% border=0 cellpadding=0 cellspacing=1>\n";
     echo "  <tr valign=top>\n";
@@ -494,25 +442,12 @@ if ($request == 'GET') {
         echo "                <input type='hidden' name='timefmt_24hr_text' value=\"$timefmt_24hr_text\">\n";
         echo "                <input type='hidden' name='timefmt_size' value=\"$timefmt_size\">\n";
 
-        // query to populate dropdown with statuses //
-
-        $query2 = "select * from " . $db_prefix . "punchlist order by punchitems asc";
-        $result2 = mysqli_query($GLOBALS["___mysqli_ston"], $query2);
-
         echo "              <tr><td class=table_rows height=25 width=20% style='padding-left:32px;' nowrap>Status:</td><td colspan=2 width=80%
                       style='color:red;font-family:Tahoma;font-size:10px;padding-left:20px;'>
-                      <select name='post_statusname'>\n";
-        echo "                        <option value ='1'>Choose One</option>\n";
-
-        while ($row2 = mysqli_fetch_array($result2)) {
-            if ($post_statusname == "" . $row2['punchitems'] . "") {
-                echo "                        <option selected>" . $row2['punchitems'] . "</option>\n";
-            } else {
-                echo "                        <option>" . $row2['punchitems'] . "</option>\n";
-            }
-        }
-        echo "                      </select>&nbsp;*</td></tr>\n";
-        ((mysqli_free_result($result2) || (is_object($result2) && (get_class($result2) == "mysqli_result"))) ? true : false);
+              <select name='post_statusname'>\n";
+        echo "<option value ='1'>Choose One</option>\n";
+        echo html_options(tc_select("punchitems", "punchlist", "1=1 ORDER BY punchitems ASC"), $post_statusname);
+        echo "</select>&nbsp;*</td></tr>\n";
 
         echo "              <tr><td class=table_rows height=25 width=20% style='padding-left:32px;' nowrap>Notes:</td><td align=left colspan=2 width=80%
                       style='padding-left:20px;'><input type='text' size='17' maxlength='250' name='post_notes' value='$post_notes'></td></tr>\n";
@@ -530,9 +465,6 @@ if ($request == 'GET') {
 
     } else {
 
-        $post_username = addslashes($post_username);
-        $post_displayname = addslashes($post_displayname);
-
         // configure timestamp to insert/update
 
         if ($calendar_style == "euro") {
@@ -542,107 +474,74 @@ if ($request == 'GET') {
             $post_date = "$month/$day/$year";
         }
 
-        $timestamp = strtotime($post_date . " " . $post_time) - $tzo;
+        $timestamp = strtotime($post_date . " " . $post_time) - @$tzo;
 
         // check for duplicate time for $post_username
 
-        $query = "select * from " . $db_prefix . "info where fullname = '" . $post_username . "'";
-        $result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
-
-        $post_username = stripslashes($post_username);
-        $post_displayname = stripslashes($post_displayname);
+        $result = tc_select("timestamp", "info", "fullname = ? AND timestamp = ?", array($post_username, $timestamp));
 
         while ($row = mysqli_fetch_array($result)) {
+            echo "            <table align=center class=table_border width=60% border=0 cellpadding=0 cellspacing=3>\n";
+            echo "              <tr>\n";
+            echo "                <td class=table_rows width=20 align=center><img src='../images/icons/cancel.png' /></td><td class=table_rows_red>
+                Duplicate time exists for this user on this date. Time not added..</td></tr>\n";
+            echo "            </table>\n";
+            echo "            <br />\n";
+            echo "            <form name='form' action='$self' method='post' onsubmit=\"return isDate()\">\n";
+            echo "            <table align=center class=table_border width=60% border=0 cellpadding=3 cellspacing=0>\n";
+            echo "              <tr>\n";
+            echo "                <th class=rightside_heading nowrap halign=left colspan=3><img src='../images/icons/clock_add.png' />&nbsp;&nbsp;&nbsp;Add Time
+                </th>\n";
+            echo "              </tr>\n";
+            echo "              <tr><td height=15></td></tr>\n";
+            echo "                <input type='hidden' name='date_format' value='$js_datefmt'>\n";
+            echo "              <tr><td class=table_rows height=25 width=20% style='padding-left:32px;' nowrap>Username:</td><td align=left class=table_rows
+                  colspan=2 width=80% style='padding-left:20px;'>
+                  <input type='hidden' name='post_username' value=\"$post_username\">$post_username</td></tr>\n";
+            echo "              <tr><td class=table_rows height=25 width=20% style='padding-left:32px;' nowrap>Display Name:</td><td align=left class=table_rows
+                  colspan=2 width=80% style='padding-left:20px;'>
+                  <input type='hidden' name='post_displayname' value=\"$post_displayname\">$post_displayname</td></tr>\n";
+            echo "              <tr><td class=table_rows height=25 width=20% style='padding-left:32px;' nowrap>Date:</td><td colspan=2 width=80%
+                  style='color:red;font-family:Tahoma;font-size:10px;padding-left:20px;'><input type='text'
+                  size='10' maxlength='10' name='post_date' value='$post_date'>&nbsp;*&nbsp;&nbsp;&nbsp;<a href=\"#\"
+                  onclick=\"cal.select(document.forms['form'].post_date,'post_date_anchor','$js_datefmt');
+                  return false;\" name=\"post_date_anchor\" id=\"post_date_anchor\" style='font-size:11px;color:#27408b;'>Pick Date</a></td><tr>\n";
+            echo "              <tr><td class=table_rows height=25 width=20% style='padding-left:32px;' nowrap>Time:</td><td colspan=2 width=80%
+                  style='color:red;font-family:Tahoma;font-size:10px;padding-left:20px;'>
+                  <input type='text' size='10' maxlength='$timefmt_size' name='post_time' value='$post_time'>&nbsp;*&nbsp;&nbsp;
+                  <a style='text-decoration:none;font-size:11px;color:#27408b;'>($timefmt_24hr_text)</a></td></tr>\n";
+            echo "                <input type='hidden' name='get_user' value=\"$get_user\">\n";
+            echo "                <input type='hidden' name='timefmt_24hr' value=\"$timefmt_24hr\">\n";
+            echo "                <input type='hidden' name='timefmt_24hr_text' value=\"$timefmt_24hr_text\">\n";
+            echo "                <input type='hidden' name='timefmt_size' value=\"$timefmt_size\">\n";
 
-            $info_table_timestamp = "" . $row['timestamp'] . "";
-            if ($timestamp == $info_table_timestamp) {
-                echo "            <table align=center class=table_border width=60% border=0 cellpadding=0 cellspacing=3>\n";
-                echo "              <tr>\n";
-                echo "                <td class=table_rows width=20 align=center><img src='../images/icons/cancel.png' /></td><td class=table_rows_red>
-                    Duplicate time exists for this user on this date. Time not added..</td></tr>\n";
-                echo "            </table>\n";
-                echo "            <br />\n";
-                echo "            <form name='form' action='$self' method='post' onsubmit=\"return isDate()\">\n";
-                echo "            <table align=center class=table_border width=60% border=0 cellpadding=3 cellspacing=0>\n";
-                echo "              <tr>\n";
-                echo "                <th class=rightside_heading nowrap halign=left colspan=3><img src='../images/icons/clock_add.png' />&nbsp;&nbsp;&nbsp;Add Time
-                    </th>\n";
-                echo "              </tr>\n";
-                echo "              <tr><td height=15></td></tr>\n";
-                echo "                <input type='hidden' name='date_format' value='$js_datefmt'>\n";
-                echo "              <tr><td class=table_rows height=25 width=20% style='padding-left:32px;' nowrap>Username:</td><td align=left class=table_rows
-                      colspan=2 width=80% style='padding-left:20px;'>
-                      <input type='hidden' name='post_username' value=\"$post_username\">$post_username</td></tr>\n";
-                echo "              <tr><td class=table_rows height=25 width=20% style='padding-left:32px;' nowrap>Display Name:</td><td align=left class=table_rows
-                      colspan=2 width=80% style='padding-left:20px;'>
-                      <input type='hidden' name='post_displayname' value=\"$post_displayname\">$post_displayname</td></tr>\n";
-                echo "              <tr><td class=table_rows height=25 width=20% style='padding-left:32px;' nowrap>Date:</td><td colspan=2 width=80%
-                      style='color:red;font-family:Tahoma;font-size:10px;padding-left:20px;'><input type='text'
-                      size='10' maxlength='10' name='post_date' value='$post_date'>&nbsp;*&nbsp;&nbsp;&nbsp;<a href=\"#\"
-                      onclick=\"cal.select(document.forms['form'].post_date,'post_date_anchor','$js_datefmt');
-                      return false;\" name=\"post_date_anchor\" id=\"post_date_anchor\" style='font-size:11px;color:#27408b;'>Pick Date</a></td><tr>\n";
-                echo "              <tr><td class=table_rows height=25 width=20% style='padding-left:32px;' nowrap>Time:</td><td colspan=2 width=80%
-                      style='color:red;font-family:Tahoma;font-size:10px;padding-left:20px;'>
-                      <input type='text' size='10' maxlength='$timefmt_size' name='post_time' value='$post_time'>&nbsp;*&nbsp;&nbsp;
-                      <a style='text-decoration:none;font-size:11px;color:#27408b;'>($timefmt_24hr_text)</a></td></tr>\n";
-                echo "                <input type='hidden' name='get_user' value=\"$get_user\">\n";
-                echo "                <input type='hidden' name='timefmt_24hr' value=\"$timefmt_24hr\">\n";
-                echo "                <input type='hidden' name='timefmt_24hr_text' value=\"$timefmt_24hr_text\">\n";
-                echo "                <input type='hidden' name='timefmt_size' value=\"$timefmt_size\">\n";
+            echo "              <tr><td class=table_rows height=25 width=20% style='padding-left:32px;' nowrap>Status:</td><td colspan=2 width=80%
+                  style='color:red;font-family:Tahoma;font-size:10px;padding-left:20px;'>
+                  <select name='post_statusname'>\n";
+            echo "<option value ='1'>Choose One</option>\n";
+            echo html_options(tc_select("punchitems", "punchlist", "1=1 ORDER BY punchitems ASC"), $post_statusname);
+            echo "</select>&nbsp;*</td></tr>\n";
 
-                // query to populate dropdown with statuses //
-
-                $query2 = "select * from " . $db_prefix . "punchlist order by punchitems asc";
-                $result2 = mysqli_query($GLOBALS["___mysqli_ston"], $query2);
-
-                echo "              <tr><td class=table_rows height=25 width=20% style='padding-left:32px;' nowrap>Status:</td><td colspan=2 width=80%
-                      style='color:red;font-family:Tahoma;font-size:10px;padding-left:20px;'>
-                      <select name='post_statusname'>\n";
-                echo "                        <option value ='1'>Choose One</option>\n";
-
-                while ($row2 = mysqli_fetch_array($result2)) {
-                    if ($post_statusname == "" . $row2['punchitems'] . "") {
-                        echo "                        <option selected>" . $row2['punchitems'] . "</option>\n";
-                    } else {
-                        echo "                        <option>" . $row2['punchitems'] . "</option>\n";
-                    }
-                }
-                echo "                      </select>&nbsp;*</td></tr>\n";
-                ((mysqli_free_result($result2) || (is_object($result2) && (get_class($result2) == "mysqli_result"))) ? true : false);
-
-                echo "              <tr><td class=table_rows height=25 width=20% style='padding-left:32px;' nowrap>Notes:</td><td align=left colspan=2 width=80%
-                      style='padding-left:20px;'><input type='text' size='17' maxlength='250' name='post_notes' value='$post_notes'></td></tr>\n";
-                echo "              <tr><td class=table_rows align=right colspan=3 style='color:red;font-family:Tahoma;font-size:10px;'>*&nbsp;required&nbsp;</td></tr>\n";
-                echo "            </table>\n";
-                echo "            <div style=\"position:absolute;visibility:hidden;background-color:#ffffff;layer-background-color:#ffffff;\" id=\"mydiv\"
-                 height=200>&nbsp;</div>\n";
-                echo "            <table align=center width=60% border=0 cellpadding=0 cellspacing=3>\n";
-                echo "              <tr><td height=40>&nbsp;</td></tr>\n";
-                echo "              <tr><td width=30><input type='image' name='submit' value='Add Time' align='middle'
-                      src='../images/buttons/next_button.png'></td><td><a href='timeadmin.php'><img src='../images/buttons/cancel_button.png'
-                      border='0'></td></tr></table></form></td></tr>\n";
-                include '../footer.php';
-                exit;
-            }
+            echo "              <tr><td class=table_rows height=25 width=20% style='padding-left:32px;' nowrap>Notes:</td><td align=left colspan=2 width=80%
+                  style='padding-left:20px;'><input type='text' size='17' maxlength='250' name='post_notes' value='$post_notes'></td></tr>\n";
+            echo "              <tr><td class=table_rows align=right colspan=3 style='color:red;font-family:Tahoma;font-size:10px;'>*&nbsp;required&nbsp;</td></tr>\n";
+            echo "            </table>\n";
+            echo "            <div style=\"position:absolute;visibility:hidden;background-color:#ffffff;layer-background-color:#ffffff;\" id=\"mydiv\"
+             height=200>&nbsp;</div>\n";
+            echo "            <table align=center width=60% border=0 cellpadding=0 cellspacing=3>\n";
+            echo "              <tr><td height=40>&nbsp;</td></tr>\n";
+            echo "              <tr><td width=30><input type='image' name='submit' value='Add Time' align='middle'
+                  src='../images/buttons/next_button.png'></td><td><a href='timeadmin.php'><img src='../images/buttons/cancel_button.png'
+                  border='0'></td></tr></table></form></td></tr>\n";
+            include '../footer.php';
+            exit;
         }
-        ((mysqli_free_result($result) || (is_object($result) && (get_class($result) == "mysqli_result"))) ? true : false);
 
         // check to see if this would be the most recent time for $post_username. if so, run the update query for the employees table.
 
-        $post_username = addslashes($post_username);
-        $post_displayname = addslashes($post_displayname);
-
-        $query = "select * from " . $db_prefix . "employees where empfullname = '" . $post_username . "'";
-        $result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
-
-        while ($row = mysqli_fetch_array($result)) {
-            $employees_table_timestamp = "" . $row['tstamp'] . "";
-        }
-        ((mysqli_free_result($result) || (is_object($result) && (get_class($result) == "mysqli_result"))) ? true : false);
-
+        $employees_table_timestamp = tc_select_value("tstamp", "employees", "empfullname = ?", $post_username);
         if ($timestamp > $employees_table_timestamp) {
-            $update_query = "update " . $db_prefix . "employees set tstamp = '" . $timestamp . "' where empfullname = '" . $post_username . "'";
-            $update_result = mysqli_query($GLOBALS["___mysqli_ston"], $update_query);
+            tc_update_strings("employees", array("tstamp" => $timestamp), "empfullname = ?", $post_username);
         }
 
         // determine who the authenticated user is for audit log
@@ -663,25 +562,29 @@ if ($request == 'GET') {
 
         // add the time to the info table for $post_username
 
-        $query = "insert into " . $db_prefix . "info (fullname, `inout`, timestamp, notes) values ('" . $post_username . "', '" . $post_statusname . "', '" . $timestamp . "',
-          '" . $post_notes . "')";
-        $result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
+        tc_insert_strings("info", array(
+            "fullname"  => $post_username,
+            "inout"     => $post_statusname,
+            "timestamp" => $timestamp,
+            "notes"     => trim($post_notes),
+        ));
 
         // add the results to the audit table
 
-        if (strtolower($ip_logging) == "yes") {
-            $query2 = "insert into " . $db_prefix . "audit (modified_by_ip, modified_by_user, modified_when, modified_from, modified_to, modified_why, user_modified) values
-           ('" . $connecting_ip . "', '" . $user . "', '" . $time_tz_stamp . "', '0', '" . $timestamp . "', '" . $post_why . "', '" . $post_username . "')";
-            $result2 = mysqli_query($GLOBALS["___mysqli_ston"], $query2);
-        } else {
-            $query2 = "insert into " . $db_prefix . "audit (modified_by_user, modified_when, modified_from, modified_to, modified_why, user_modified) values
-           ('" . $user . "', '" . $time_tz_stamp . "', '0', '" . $timestamp . "', '" . $post_why . "', '" . $post_username . "')";
-            $result2 = mysqli_query($GLOBALS["___mysqli_ston"], $query2);
+        $data = array(
+            "modified_by_user" => $user,
+            "modified_when" => $time_tz_stamp,
+            "modified_from" => 0,
+            "modified_to" => $timestamp,
+            "modified_why" => $post_why,
+            "user_modified" => $post_username,
+        );
+        if (yes_no_bool($ip_logging)) {
+            $data["modified_by_ip"] = $connecting_ip;
         }
+        tc_insert_strings("audit", $data);
 
-        $post_username = stripslashes($post_username);
-        $post_displayname = stripslashes($post_displayname);
-        $post_date = date($datefmt, $timestamp + $tzo);
+        $post_date = date($datefmt, $timestamp + @$tzo);
 
         echo "            <table align=center class=table_border width=60% border=0 cellpadding=0 cellspacing=3>\n";
         echo "              <tr>\n";
