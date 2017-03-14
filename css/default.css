@@ -100,9 +100,16 @@
 
 .header {
     height: 45px;
+    color: #000000;
     background-color: #748771;
     border: solid #cdc0b0;
     border-width: 0px 0px 1px 0px;
+}
+
+.header a {
+    font-family: Tahoma;
+    font-size: 10pt;
+    text-decoration: none;
 }
 
 .left_main {

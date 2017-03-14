@@ -28,6 +28,7 @@ New Install
     this database.
 --- Import the tables using the create_tables.sql script included in this distribution.
 --- Copy config.inc.php.sample to config.inc.php and modify settings as desired.
+--- Copy punchclock/config.inc.php.sample to punchclock/config.inc.php and modify settings as desired.
 --- Open index.php with your web browser.
 --- Click on the Administration link on the right side of the page. Input "admin" (without the quotes)
     for the username and "admin" (without the quotes) for the password. Please change the password
@@ -47,6 +48,8 @@ New Install
     *** specifically give them reports level access when you are creating or editing the users,
     *** if you choose to secure these reports for these users. To make PHP Timeclock lock down the
     *** reports to only these users, set the use_reports_password setting in config.inc.php to "yes".
+
+--- Optionally, create css/local.css with any style customizations
 
 
 Upgrading from 1.04

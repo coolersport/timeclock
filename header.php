@@ -69,6 +69,7 @@ if ($use_client_tz == "yes") {
 }
 
 echo "<link rel='stylesheet' type='text/css' media='screen' href='css/default.css' />\n";
+echo "<link rel='stylesheet' type='text/css' media='screen' href='css/local.css' />\n";
 echo "<link rel='stylesheet' type='text/css' media='print' href='css/print.css' />\n";
 
 // set refresh rate for each page //  

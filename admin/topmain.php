@@ -31,7 +31,7 @@ if ($date_link == "none") {
       <p>If the times below appear to be an hour off, click <a href='../resetcookie.php' style='font-size:9px;'>here</a> to reset.<br />
          If that doesn't work, restart your web browser and reset again.</p></td>\n";
     }
-    echo "    <td colspan=2 scope=col align=right valign=middle><a style='color:#000000;font-family:Tahoma;font-size:10pt;text-decoration:none;'>";
+    echo "    <td colspan=2 scope=col align=right valign=middle><a>";
 
 } else {
 
@@ -40,8 +40,7 @@ if ($date_link == "none") {
       <p>If the times below appear to be an hour off, click <a href='../resetcookie.php' style='font-size:9px;'>here</a> to reset.<br />
         If that doesn't work, restart your web browser and reset again.</p></td>\n";
     }
-    echo "    <td colspan=2 scope=col align=right valign=middle><a href='$date_link' style='color:#000000;font-family:Tahoma;font-size:10pt;
-        text-decoration:none;'>";
+    echo "    <td colspan=2 scope=col align=right valign=middle><a href='$date_link'>";
 }
 
 // display today's date in top right of each page. This will link to $date_link you setup in config.inc.php. //

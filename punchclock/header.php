@@ -31,6 +31,7 @@ echo "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"; // puts IE6 in quirks mode
     <link rel="icon" href="/favicon.ico"/>
     <link rel="shortcut icon" href="/favicon.ico"/>
     <link rel="stylesheet" type="text/css" href="<?php echo $TIMECLOCK_URL; ?>/css/default.css"/>
+    <link rel="stylesheet" type="text/css" href="<?php echo $TIMECLOCK_URL; ?>/css/local.css"/>
     <link rel="stylesheet" type="text/css" href="css/punchclock.css"/>
     <style type="text/css">
         tr.odd {
