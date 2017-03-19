@@ -221,6 +221,10 @@ QUERY
         while ($row = mysqli_fetch_array($result)) {
             $inout = $row[0];
         }
+
+		if (!has_value($inout)) {
+            $inout = tc_select_value("punchitems", "punchlist", "in_or_out = ?", 1);
+		}
     }
     elseif (has_value($inout)) {
         $inout = tc_select_value("punchitems", "punchlist", "punchitems = ?", $inout);
