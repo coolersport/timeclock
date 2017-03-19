@@ -133,7 +133,7 @@ $manual_clockin = "no";
    Since: v1.4
  */
 
-$ip_logging = "yes";
+$ip_logging = "no";
 
 
 /* An email address to display in the footer (footer.php). Set it to "none" to ignore
@@ -294,7 +294,7 @@ $refresh = "300";
    Since: v1.4
  */
 
-$date_link = "http://www.historychannel.com/tdih";
+$date_link = "none";
 
 
 /* These are alternating row colors for the main page and for reports.
@@ -415,7 +415,7 @@ $user_or_display = "user";
    Since: v1.4
  */
 
-$display_ip = "yes";
+$display_ip = "no";
 
 
 /* Choose whether to log and include in the reports the office name of
@@ -435,7 +435,7 @@ $audit_office = "no";
    Since: v1.4
  */
 
-$export_csv = "no";
+$export_csv = "yes";
 
 
 /* --- TIMEZONE INFO --- */
