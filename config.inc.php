@@ -181,10 +181,10 @@ $email = "none";
    Since: v1.4
  */
 
-$datefmt = "n/j/Y";
-$js_datefmt = "M/d/yyyy";
-$tmp_datefmt = "m/d/yyyy";
-$calendar_style = "amer";
+$datefmt = "j/n/Y";
+$js_datefmt = "d/M/yyyy";
+$tmp_datefmt = "d/m/yyyy";
+$calendar_style = "euro";
 
 
 /* Choose the way times are displayed. Default is "g:i a".
