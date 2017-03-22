@@ -404,7 +404,7 @@ $username_dropdown_only = "no";
    Since: v1.4
  */
 
-$user_or_display = "user";
+$user_or_display = "display";
 
 
 /* Choose whether to include in the reports the ip addresses of the systems that connect to
