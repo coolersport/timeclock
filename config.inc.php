@@ -101,7 +101,7 @@ $use_passwd = "no";
    Since: v1.4
  */
 
-$use_reports_password = "no";
+$use_reports_password = "yes";
 
 
 /* Choose whether to allow barcode clock-in/out. Options are "yes" or "no".
