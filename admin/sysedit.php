@@ -1164,8 +1164,8 @@ if ($request == 'GET') {
     $row_color = ($row_count % 2) ? $color2 : $color1;
     echo "            <table width=100% border=0 cellpadding=0 cellspacing=0>\n";
     echo "              <tr><td height=40>&nbsp;</td></tr>\n";
-    echo "              <tr><td width=62 valign=middle><!--input type='image' name='submit' value='Add Time' align='middle'
-                      src='../images/buttons/next_button.png'--></td><td><a href='index.php' disabled><img src='../images/buttons/cancel_button.png' 
+    echo "              <tr><td width=62 valign=middle><input type='image' name='submit' value='Add Time' align='middle'
+                      src='../images/buttons/next_button.png'></td><td><a href='index.php' disabled><img src='../images/buttons/cancel_button.png' 
                       border='0'></td></tr></table></form></td></tr>\n";
     include '../footer.php';
     exit;

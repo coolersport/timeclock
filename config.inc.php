@@ -82,7 +82,7 @@ $allowed_networks = array();
    Since: v1.4
  */
 
-$disable_sysedit = "no";
+$disable_sysedit = "yes";
 
 
 /* Choose whether to use encrypted passwords along with the usernames. Options are
