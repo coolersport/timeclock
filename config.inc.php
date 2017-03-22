@@ -230,7 +230,7 @@ $display_current_users = "no";
    Since: v1.4
  */
 
-$show_display_name = "no";
+$show_display_name = "yes";
 
 
 /* Display punch-in/out times for only a certain office on the main page of the application.
