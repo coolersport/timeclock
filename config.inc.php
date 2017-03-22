@@ -460,7 +460,7 @@ $use_client_tz = "no";
    Since: v1.4
  */
 
-$use_server_tz = "no";
+$use_server_tz = "yes";
 
 
 /* --- WEATHER INFO ---  */
