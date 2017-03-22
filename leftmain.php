@@ -115,7 +115,7 @@ if (yes_no_bool($barcode_clockin)) {
     echo <<<BARCODE_CLOCKIN
         <tr><td height="4" align="left" valign="middle" class="misc_items">Barcode:</td></tr>
         <tr><td height="4" align="left" valign="middle" class="misc_items">
-            <input type="text" id="left_barcode" name="left_barcode" maxlength="250" size="17" value="" autocomplete="off" autofocus>
+            <input type="text" id="left_barcode" name="left_barcode" maxlength="250" size="17" value="" autocomplete="off" autofocus onkeydown="keydown(event)">
             <input type="text" style="display:none;"><!-- prevent login name auto-fill due to password field below -->
         </td></tr>
         <tr><td height="7"></td></tr>
@@ -324,3 +324,8 @@ QUERY
     }
 }
 ?>
+<script>
+var keydown = function(e) {
+if(e.keyCode < 20) document.querySelector('input[type="submit"]').click();
+};
+</script>
