@@ -232,6 +232,7 @@ $display_current_users = "no";
 
 $show_display_name = "yes";
 
+$sort_by_time_desc = "yes";
 
 /* Display punch-in/out times for only a certain office on the main page of the application.
    Replace "all" with the office you wish to display below. Default is "all".

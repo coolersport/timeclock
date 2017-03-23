@@ -26,14 +26,15 @@ if (!isset($_GET['printer_friendly'])) {
 
 // code to allow sorting by Name, In/Out, Date, Notes //
 
+$sorttime = isset($sort_by_time_desc) && $sort_by_time_desc == "yes";
 if (!isset($_GET['sortcolumn']) or preg_match('/[^\w]/', $_GET['sortcolumn'])) {
-    $sortcolumn = (($show_display_name == "yes") ? "displayname" : "fullname");
+    $sortcolumn =  $sorttime ? "tstamp" : (($show_display_name == "yes") ? "displayname" : "fullname");
 } else {
     $sortcolumn = addslashes($_GET['sortcolumn']);
 }
 
 if (!isset($_GET['sortdirection']) or preg_match('/[^\w]/', $_GET['sortdirection'])) {
-    $sortdirection = "asc";
+    $sortdirection = $sorttime ? "desc" : "asc";
 } else {
     $sortdirection = addslashes($_GET['sortdirection']);
 }
