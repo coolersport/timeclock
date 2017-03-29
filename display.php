@@ -2,6 +2,7 @@
 
 $row_count = 0;
 $page_count = 0;
+$dt = new DateTime("now", new DateTimeZone($server_timezone));
 
 while ($row = mysqli_fetch_array($result)) {
 
@@ -94,9 +95,12 @@ while ($row = mysqli_fetch_array($result)) {
 
     // display the query results //
 
-    $display_stamp = $display_stamp + @$tzo;
-    $time = date($timefmt, $display_stamp);
-    $date = date($datefmt, $display_stamp);
+    //$display_stamp = $display_stamp + @$tzo;
+    //$time = date($timefmt, $display_stamp);
+    //$date = date($datefmt, $display_stamp);
+    $dt->setTimestamp($display_stamp);
+    $time = $dt->format($timefmt);
+    $date = $dt->format($datefmt);
 
     if (yes_no_bool($show_display_name)) {
         echo "              <tr class=display_row><td nowrap width=20% bgcolor='$row_color' style='padding-left:10px; padding-right:10px;'>" . $row["displayname"] . "</td>\n";

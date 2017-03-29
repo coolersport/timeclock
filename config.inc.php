@@ -463,6 +463,7 @@ $use_client_tz = "no";
 
 $use_server_tz = "yes";
 
+$server_timezone = "Australia/Melbourne";
 
 /* --- WEATHER INFO ---  */
 
